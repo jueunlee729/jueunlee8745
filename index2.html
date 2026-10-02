@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="ko" class="no-js">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Portfolio | KMJ | Web Designs</title>
-		<meta name="description" content="A page background effect where SVG shapes morph and transform on scroll" />
+		<title>Portfolio | Web/App</title>
+		<meta name="description" content="그래픽·웹·영상 디자인 포트폴리오" />
 		<meta name="keywords" content="background, svg, morph, animation, scroll, shape, web development, css, javascript" />
 		<meta name="author" content="Codrops" />
-		<link rel="shortcut icon" href="android-icon-96x96.png">
+		
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" rel="stylesheet">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css" />
@@ -28,7 +28,8 @@
 			}
 			if (!supportsCssVars()) alert('Please view this demo in a modern browser that supports CSS Variables.')
 		</script>
-	</head>
+	<style>.portfolio-empty{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:160px 24px;text-align:center}.portfolio-empty h2{font-size:clamp(2rem,8vw,5rem);margin:0 0 24px}.portfolio-empty p{font-family:sans-serif;margin:0}</style>
+</head>
 	<body class="demo-1 loading" id="body">
 		<svg class="hidden">
 			<symbol id="icon-arrow" viewBox="0 0 24 24">
@@ -66,119 +67,21 @@
 							<use  xlink:href="#icon-arrow"></use>
 						</svg></a>
 					</div>
-					<h1 class="codrops-header__title">PortFolio | Kim MinJi</h1>
+					<h1 class="codrops-header__title">Portfolio</h1>
 				</header>
 				<nav class="demos">
 					<a class="demo demo--current" href="index2.html"><svg class="decoshape" preserveAspectRatio="none"><use xlink:href="#shape-demo"></use></svg>Web/App</a>
 					<a class="demo" href="index.html"><svg class="decoshape"><use xlink:href="#shape-demo"></use></svg>Graphic</a>
 					<a class="demo" href="index3.html"><svg class="decoshape"><use xlink:href="#shape-demo"></use></svg>Video</a>
 				</nav>
-				<a class="pater" href="#">
-					<img src="img/nametag_white.png" alt="nametag">
-				</a>
+				
 				<div class="deco deco--title">PortFolio | Web Designs</div>
 			</div>
-			<div class="content-wrap">
-				<div class="content content--layout content--layout-1">
-					<a  class="video__img" href="https://www.figma.com/community/file/1326078139206382714/ux-ui-design-dessert-39-app-redesign">
-						<div class="video__img"></div>
-						
-					</a>
-					<a class="content__img" href="https://www.figma.com/community/file/1326078139206382714/ux-ui-design-dessert-39-app-redesign">
-						<img class="content__img" src="img/UXUI2.jpg" alt="Some image" />
-					</a>
-					
-					<h3 class="content__title">Dessert</h3>
-					<!-- <p class="content__author" style="color: var(--background-color-3)">UX/UI design</p> -->
-					<p class="content__desc">디저트 전문점 '디저트39'의 <br>  브랜딩 디자인 변경 및 <br> UX/UI 리디자인 진행</p>
-					<a href="https://www.figma.com/file/fbLAmRIjo1bmw6CatbeDtC/UX%2FUI-Design---Dessert-39-App-Redesign?type=design&node-id=392%3A2&mode=design&t=TuB26hLSIbA2OZAd-1" 
-					class="content__link" >Discover</a>
-					<!-- target="_blank" -->
-					<!-- <a href="web/매스티나/index.html" class="content__link" data-fancybox="gallery-a">Discover</a> -->
-				</div>
-			</div>
-			
+			<section class="portfolio-empty" aria-label="Web/App 작업물"><h2>Web/App</h2><p>작업물을 준비 중입니다.</p></section>
+</main>
 
-			<div class="content-wrap">
-				<div class="content content--layout content--layout-2">
-					<a class="video__img" href="web/project02/index.html">
-						<div class="video__img"></div>
-					</a>
-					<a class="video__img" href="web/project02/index.html">
-						<div class="video__img"></div>
-					</a>
-					<img class="content__img" src="img/web2.jpg" alt="Some image" />
-					<h3 class="content__title">Jewel</h3>
-					<p class="content__author" >Webdesign</p>
-					<p class="content__desc">가상의 쥬얼리 브랜드 'Aube' 홈페이지 디자인 및 반응형 웹 제작</p>
-					<a href="web/project02/index.html" class="content__link" title="figma">Discover</a>
-					<!-- <a href="web/project02/index.html" class="content__link" data-fancybox="gallery-a">Discover</a> -->
-				</div>
-			</div>
+
 		
-			<div class="content-wrap">
-				<div class="content content--layout content--layout-3">
-					<a class="content__img" href="web/project03/index.html">
-						<img class="content__img" src="img/web3.jpg" alt="Some image" />
-					</a>
-					<h3 class="content__title">Cafe</h3>
-					<p class="content__author">Webdesign</p>
-					<p class="content__desc">카페 브랜드 '달콤'의 <br> 반응형 웹 리디자인 진행</p>
-					<a href="web/project03/index.html" class="content__link" id="openPopup_2">Discover</a>
-				</div>
-			</div>
-			
-			<div class="content-wrap">
-				<div class="content content--layout content--layout-2">
-					<a class="content__img" href="web/project01/index.html">
-						<img class="content__img" src="img/web1.jpg" alt="Some image" />
-					</a>
-					<h3 class="content__title">beauty</h3>
-					<p class="content__author">Webdesign</p>
-					<p class="content__desc">뷰티 브랜드 '매스티나'의 <br> 홈페이지 디자인 변경 및 <br> 반응형 웹 리디자인 진행</p>
-					<a href="web/project01/index.html" class="content__link"  id="openPopup_3">Discover</a>
-				</div>
-			</div>
-			
-			<!-- <div class="content-wrap">
-				<div class="content content--layout content--layout-1">
-					<img class="content__img" src="img/5.jpg" alt="Some image" />
-					<h3 class="content__title">frank</h3>
-					<p class="content__author">Frank Cherry</p>
-					<p class="content__desc">Frank's work and nothing more.</p>
-					<a href="#" class="content__link">Discover</a>
-				</div>
-			</div> -->
-			<!-- Related demos -->
-			<section class="content content--related">
-				<p class="content__info">If you enjoyed this demo you might also like:</p>
-				<a class="content__related-item" href="https://tympanus.net/Development/ElasticSVGElements/">
-					<img class="content__related-img" src="img/related/ItemRevealer.jpg">
-					<h3 class="content__related-title">Elastic SVG Elements</h3>
-				</a>
-				<a class="content__related-item" href="https://tympanus.net/Development/ItemRevealer/">
-					<img class="content__related-img" src="img/related/ElasticSVGElements.jpg">
-					<h3 class="content__related-title">Item Revealer</h3>
-				</a>
-			</section>
-		</main>
-
-		<script>
-			const openPopupButton = document.getElementById('openPopup');
-			const closePopupButton = document.getElementById('closePopup');
-			const popup = document.getElementById('popup');
-			const videoFrame = document.getElementById('videoFrame');
-	
-			openPopupButton.addEventListener('click', () => {
-				popup.style.display = 'block';
-				videoFrame.src = 'popup';
-			});
-	
-			closePopupButton.addEventListener('click', () => {
-				popup.style.display = 'none';
-	
-			});
-		</script>
 		<script src="js/imagesloaded.pkgd.min.js"></script>
 		<script src="js/anime.min.js"></script>
 		<script src="js/scrollMonitor.js"></script>
