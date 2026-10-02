@@ -140,8 +140,8 @@ a:focus {
 	left: var(--rain-x);
 	width: var(--rain-width, 1px);
 	height: var(--rain-length);
-	/* A faint upper trace gathers into a denser lower water trail. */
-	background: linear-gradient(to bottom, transparent 0%, rgba(var(--rain-color), .08) 12%, rgba(var(--rain-color), .4) 40%, rgba(var(--rain-color), .72) 68%, rgb(var(--rain-color)) 93%, rgba(var(--rain-color), .4) 100%);
+	/* Uneven water density, with soft fades at both ends. */
+	background: linear-gradient(to bottom, transparent 0%, rgba(var(--rain-color), .16) 10%, rgba(var(--rain-color), .65) 25%, rgba(var(--rain-color), .9) 37%, rgba(var(--rain-color), .3) 49%, rgba(var(--rain-color), .68) 62%, rgb(var(--rain-color)) 74%, rgba(var(--rain-color), .45) 85%, rgba(var(--rain-color), .12) 94%, transparent 100%);
 	--rain-color: 225, 235, 242;
 	opacity: var(--rain-opacity, .24);
 	filter: blur(.3px);
@@ -168,7 +168,7 @@ a:focus {
 	height: 7px;
 	transform: translateX(-50%);
 	clip-path: polygon(43% 0, 57% 0, 72% 52%, 80% 86%, 60% 100%, 40% 100%, 20% 86%, 28% 52%);
-	background: linear-gradient(to bottom, transparent, rgba(var(--rain-color), .6) 55%, rgba(var(--rain-color), .85));
+	background: linear-gradient(to bottom, transparent 0%, rgba(var(--rain-color), .85) 35%, rgba(var(--rain-color), .6) 55%, rgba(var(--rain-color), .15) 82%, transparent 100%);
 }
 
 .rain-line:nth-child(1) {
@@ -185,12 +185,13 @@ a:focus {
 
 .rain-line:nth-child(2) {
 	--rain-x: 10%;
-	--rain-length: 280px;
+	--rain-length: 230px;
 	--rain-width: 1.5px;
 	--rain-opacity: 0.32;
 	--rain-duration: 6.5s;
 	--rain-delay: -3s;
-	--rain-angle: -2deg;
+	--rain-angle: -.4deg;
+	--rain-drift: -3px;
 	--rain-start: -40vh;
 	--rain-end: 125vh;
 }
@@ -208,6 +209,7 @@ a:focus {
 }
 
 .rain-line:nth-child(4) {
+	--rain-drift: 3px;
 	--rain-x: 29%;
 	--rain-length: 130px;
 	--rain-width: 1px;
@@ -233,12 +235,13 @@ a:focus {
 
 .rain-line:nth-child(6) {
 	--rain-x: 76%;
-	--rain-length: 320px;
+	--rain-length: 260px;
 	--rain-width: 1.5px;
 	--rain-opacity: 0.3;
 	--rain-duration: 7.5s;
 	--rain-delay: -7s;
-	--rain-angle: 3deg;
+	--rain-angle: .35deg;
+	--rain-drift: 2px;
 	--rain-start: -40vh;
 	--rain-end: 130vh;
 }
@@ -274,7 +277,8 @@ a:focus {
 	--rain-opacity: 0.22;
 	--rain-duration: 11s;
 	--rain-delay: -10s;
-	--rain-angle: -3deg;
+	--rain-angle: -.4deg;
+	--rain-drift: -3px;
 	--rain-start: -35vh;
 	--rain-end: 125vh;
 }
@@ -310,14 +314,15 @@ a:focus {
 	--rain-opacity: 0.29;
 	--rain-duration: 5.5s;
 	--rain-delay: -2.5s;
-	--rain-angle: 4deg;
+	--rain-angle: .4deg;
+	--rain-drift: 3px;
 	--rain-start: -30vh;
 	--rain-end: 120vh;
 }
 
 .rain-line:nth-child(13) {
 	--rain-x: 82%;
-	--rain-length: 360px;
+	--rain-length: 230px;
 	--rain-width: 1px;
 	--rain-opacity: 0.28;
 	--rain-duration: 10.5s;
@@ -339,8 +344,11 @@ a:focus {
 	--rain-end: 115vh;
 }
 
+/* Five of fourteen trails drift gently; vertical speed remains constant. */
 @keyframes rainFall {
 	from { transform: translate3d(0, var(--rain-start), 0) rotate(var(--rain-angle)); }
+	45% { transform: translate3d(var(--rain-drift, 0px), calc(var(--rain-start) * .55 + var(--rain-end) * .45), 0) rotate(var(--rain-angle)); }
+	70% { transform: translate3d(calc(var(--rain-drift, 0px) * .6), calc(var(--rain-start) * .3 + var(--rain-end) * .7), 0) rotate(var(--rain-angle)); }
 	to { transform: translate3d(0, var(--rain-end), 0) rotate(var(--rain-angle)); }
 }
 

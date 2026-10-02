@@ -1,0 +1,123 @@
+/* This stylesheet is loaded only by the Web/App page. */
+body {
+    background: linear-gradient(to bottom, #202725 0%, #26312D 52%, #1C2422 100%);
+    background-attachment: fixed;
+}
+
+/* Web/App background only; no changes to the shared palette or content. */
+.morph-wrap.moss-mist { z-index: -1; pointer-events: none; }
+.moss-plant-field {
+    position: absolute;
+    inset: 0;
+    /* Keep grass outside the central 72%; allow mist to drift across the bottom. */
+    mask-image: linear-gradient(to right, #000 5%, transparent 14%, transparent 86%, #000 95%);
+    -webkit-mask-image: linear-gradient(to right, #000 5%, transparent 14%, transparent 86%, #000 95%);
+}
+.moss-plant {
+    position: absolute;
+    bottom: -20px;
+    width: clamp(90px, 13vw, 200px);
+    height: clamp(280px, 64vh, 680px);
+    fill: rgb(35, 55, 45);
+}
+.moss-idle-sway, .moss-wind-reactive { width: 100%; height: 100%; transform-origin: bottom center; }
+.moss-wind-reactive svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: bottom center; transform: rotate(var(--base-angle, 0deg)); }
+.moss-idle-sway { animation: var(--sway-name) var(--sway-duration) ease-in-out var(--sway-delay) infinite; }
+.moss-plant--foreground { opacity: .22; filter: blur(.4px); }
+.moss-plant--midground { fill: rgb(45, 65, 52); opacity: .15; filter: blur(1.3px); }
+.moss-plant--background { fill: rgb(65, 80, 68); opacity: .09; filter: blur(2.6px); }
+.moss-plant--1 { left: -4vw; bottom: -18px; height: 65vh; width: 13vw; opacity: .23; --base-angle: 1deg; --sway-duration: 5.2s; --sway-delay: -2.3s; --sway-left: 3px; --sway-right: 4.8px; --sway-name: mossSway1; }
+.moss-plant--2 { left: -6vw; bottom: -25px; height: 78vh; width: 14vw; opacity: .08; --base-angle: -2deg; --sway-duration: 9.4s; --sway-delay: -7.6s; --sway-left: 1.8px; --sway-right: 2.5px; --sway-name: mossSway2; }
+.moss-plant--3 { left: -5vw; bottom: -22px; height: 54vh; width: 12vw; opacity: .14; --base-angle: 3deg; --sway-duration: 7.1s; --sway-delay: -3.9s; --sway-left: 2.6px; --sway-right: 3.7px; --sway-name: mossSway3; }
+.moss-plant--4 { right: -4vw; bottom: -20px; height: 69vh; width: 12.5vw; opacity: .22; --base-angle: -1.5deg; --sway-duration: 6.1s; --sway-delay: -4.4s; --sway-left: 2.9px; --sway-right: 4.4px; --sway-name: mossSway4; }
+.moss-plant--5 { right: -6vw; bottom: -27px; height: 83vh; width: 15vw; opacity: .07; --base-angle: 2deg; --sway-duration: 8.8s; --sway-delay: -6.7s; --sway-left: 2.1px; --sway-right: 2.8px; --sway-name: mossSway5; }
+.moss-plant--6 { left: -2vw; bottom: -16px; height: 32vh; width: 10vw; opacity: .16; --base-angle: -3deg; --sway-duration: 6.5s; --sway-delay: -1.7s; --sway-left: 2.5px; --sway-right: 3.4px; --sway-name: mossSway6; }
+.moss-plant--7 { right: -3vw; bottom: -24px; height: 43vh; width: 11vw; opacity: .10; --base-angle: -2.5deg; --sway-duration: 8.1s; --sway-delay: -5.8s; --sway-left: 1.9px; --sway-right: 3.1px; --sway-name: mossSway7; }
+.moss-plant--8 { left: -3vw; bottom: -21px; height: 46vh; width: 11.5vw; opacity: .12; --base-angle: 2.5deg; --sway-duration: 8.2s; --sway-delay: -4.9s; --sway-left: 2.7px; --sway-right: 3.3px; --sway-name: mossSway8; }
+.moss-plant--9 { right: -2vw; bottom: -17px; height: 35vh; width: 10.5vw; opacity: .19; --base-angle: 3.5deg; --sway-duration: 6.8s; --sway-delay: -3.2s; --sway-left: 2.8px; --sway-right: 4.1px; --sway-name: mossSway9; }
+.moss-mist-layer {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(220, 230, 226, .16) 0%, rgba(220, 230, 226, .12) 30%, rgba(220, 230, 226, .05) 58%, transparent 85%);
+    opacity: var(--fog-opacity);
+    animation: mossFog var(--fog-duration) ease-in-out var(--fog-delay) infinite alternate;
+}
+.moss-mist-layer--1 { left: -8vw; bottom: 11vh; width: 75vw; height: 20vh; filter: blur(26px); --fog-opacity: .115; --fog-duration: 30s; --fog-delay: -17s; }
+.moss-mist-layer--2 { right: -4vw; bottom: 15vh; width: 60vw; height: 18vh; filter: blur(30px); --fog-opacity: .095; --fog-duration: 36s; --fog-delay: -11s; animation-direction: alternate-reverse; }
+.moss-mist-layer--3 { left: 22vw; bottom: 25vh; width: 55vw; height: 14vh; filter: blur(34px); --fog-opacity: .065; --fog-duration: 26s; --fog-delay: -19s; }
+/* Unequal beat spacing and tiny width flex; both endpoints join continuously. */
+@keyframes mossSway1 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.5deg) scaleX(1); }
+    21% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.270deg) scaleX(0.998); }
+    47% { transform: skewX(var(--idle-skew-right)) rotate(2.1deg) scaleX(1); }
+    76% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.588deg) scaleX(1.002); }
+}
+@keyframes mossSway2 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.1deg) scaleX(1); }
+    27% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.198deg) scaleX(0.9981); }
+    55% { transform: skewX(var(--idle-skew-right)) rotate(1.4deg) scaleX(1); }
+    81% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.392deg) scaleX(1.0019); }
+}
+@keyframes mossSway3 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.4deg) scaleX(1); }
+    23% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.252deg) scaleX(0.9982); }
+    51% { transform: skewX(var(--idle-skew-right)) rotate(1.8deg) scaleX(1); }
+    73% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.504deg) scaleX(1.0018); }
+}
+@keyframes mossSway4 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.6deg) scaleX(1); }
+    26% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.288deg) scaleX(0.9983); }
+    49% { transform: skewX(var(--idle-skew-right)) rotate(1.9deg) scaleX(1); }
+    78% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.532deg) scaleX(1.0017); }
+}
+@keyframes mossSway5 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.2deg) scaleX(1); }
+    19% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.216deg) scaleX(0.9984); }
+    46% { transform: skewX(var(--idle-skew-right)) rotate(1.5deg) scaleX(1); }
+    74% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.420deg) scaleX(1.0016); }
+}
+@keyframes mossSway6 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.3deg) scaleX(1); }
+    28% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.234deg) scaleX(0.9984999999999999); }
+    54% { transform: skewX(var(--idle-skew-right)) rotate(1.7deg) scaleX(1); }
+    79% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.476deg) scaleX(1.0015); }
+}
+@keyframes mossSway7 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1deg) scaleX(1); }
+    24% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.180deg) scaleX(0.9986); }
+    52% { transform: skewX(var(--idle-skew-right)) rotate(1.6deg) scaleX(1); }
+    82% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.448deg) scaleX(1.0014); }
+}
+@keyframes mossSway8 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.45deg) scaleX(1); }
+    20% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.261deg) scaleX(0.9987); }
+    48% { transform: skewX(var(--idle-skew-right)) rotate(1.65deg) scaleX(1); }
+    71% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.462deg) scaleX(1.0013); }
+}
+@keyframes mossSway9 {
+    0%, 100% { transform: skewX(var(--idle-skew-left)) rotate(-1.55deg) scaleX(1); }
+    25% { transform: skewX(calc(var(--idle-skew-left) * .22)) rotate(-0.279deg) scaleX(0.9988); }
+    56% { transform: skewX(var(--idle-skew-right)) rotate(2deg) scaleX(1); }
+    77% { transform: skewX(calc(var(--idle-skew-right) * .3)) rotate(0.560deg) scaleX(1.0012); }
+}
+@keyframes mossFog {
+    from { transform: translate(-28px, -4px) scale(.98); opacity: calc(var(--fog-opacity) - .015); }
+    to { transform: translate(36px, 8px) scale(1.03); opacity: calc(var(--fog-opacity) + .015); }
+}
+@media screen and (max-width: 50em) {
+    .moss-mist-layer--1 { filter: blur(24px); }
+    .moss-mist-layer--2 { filter: blur(26px); }
+    .moss-plant { width: 110px; }
+    .moss-plant--2, .moss-plant--5, .moss-plant--6, .moss-plant--8, .moss-mist-layer--3 { display: none; }
+    .moss-plant--1 { left: -55px; }
+    .moss-plant--3 { left: -55px; }
+    .moss-plant--4 { right: -55px; }
+    .moss-plant--7 { right: -45px; }
+    .moss-plant--9 { right: -50px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .moss-idle-sway, .moss-mist-layer { animation: none; }
+    .moss-wind-reactive { transform: none !important; }
+}
