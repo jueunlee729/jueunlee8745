@@ -74,8 +74,62 @@ async function touch(page, points, expectHorizontal = false) {
     base = `http://127.0.0.1:${server.address().port}/`;
     browser = await chromium.launch({ executablePath: process.env.SWIPE_CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, ignoreHTTPSErrors: true });
+    await context.addInitScript(() => {
+        window.__swipePerf = { rafRequests: 0, listeners: {}, styleReads: 0, rectReads: 0 };
+        const raf = window.requestAnimationFrame;
+        window.requestAnimationFrame = callback => { window.__swipePerf.rafRequests++; return raf.call(window, callback); };
+        const listen = EventTarget.prototype.addEventListener;
+        EventTarget.prototype.addEventListener = function(type, ...args) {
+            window.__swipePerf.listeners[type] = (window.__swipePerf.listeners[type] || 0) + 1;
+            return listen.call(this, type, ...args);
+        };
+        const styles = window.getComputedStyle;
+        window.getComputedStyle = (...args) => {
+            if (document.body?.classList.contains('is-page-swiping')) window.__swipePerf.styleReads++;
+            return styles(...args);
+        };
+        const rect = Element.prototype.getBoundingClientRect;
+        Element.prototype.getBoundingClientRect = function(...args) {
+            if (document.body?.classList.contains('is-page-swiping')) window.__swipePerf.rectReads++;
+            return rect.apply(this, args);
+        };
+    });
     const page = await context.newPage();
     page.setDefaultTimeout(15000);
+    await check('performance: previews stay static while active-page water keeps animating', async () => {
+        for (const file of ['index.html', 'index2.html', 'index3.html']) {
+            await ready(page, file + '?swipe-preview=1');
+            const initial = await page.evaluate(() => ({ ...window.__swipePerf }));
+            await page.waitForTimeout(600);
+            const later = await page.evaluate(() => ({ ...window.__swipePerf }));
+            console.log('Preview work ' + file + ':', later.rafRequests - initial.rafRequests, 'rAF requests / 600ms; pointermove:', later.listeners.pointermove || 0, 'mousemove:', later.listeners.mousemove || 0);
+            assert.equal(later.rafRequests, initial.rafRequests);
+            assert.equal(later.listeners.pointermove || 0, 0);
+            assert.equal(later.listeners.mousemove || 0, 0);
+            assert.equal(await page.locator('.page-swipe-preview').count(), 0);
+            const playing = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length);
+            assert.equal(playing, 0);
+        }
+        await ready(page, 'index3.html');
+        const initial = await page.evaluate(() => window.__swipePerf.rafRequests);
+        await page.waitForTimeout(300);
+        assert((await page.evaluate(() => window.__swipePerf.rafRequests)) > initial);
+    });
+    await check('performance: drag reuses frames and performs no repeated style/layout reads', async () => {
+        await ready(page, 'index3.html');
+        await page.waitForFunction(() => document.querySelectorAll('.page-swipe-preview').length === 2);
+        await drag(page, -100, { keepDown: true });
+        const count = await page.locator('.page-swipe-preview').count();
+        await page.evaluate(() => { window.__swipePerf.styleReads = 0; window.__swipePerf.rectReads = 0; });
+        await page.mouse.move(1100, 150, { steps: 15 });
+        await page.waitForTimeout(100);
+        const work = await page.evaluate(() => ({ ...window.__swipePerf }));
+        console.log('Drag work: style reads', work.styleReads, 'rect reads', work.rectReads);
+        assert.equal(work.styleReads, 0);
+        assert.equal(work.rectReads, 0);
+        assert.equal(await page.locator('.page-swipe-preview').count(), count);
+        await page.mouse.up(); await clean(page);
+    });
     await check('click empty background does not navigate', async () => {
         await ready(page);
         const p = await emptyPoint(page);
