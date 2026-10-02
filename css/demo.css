@@ -996,7 +996,9 @@ iframe{
 }
 
 .demo-3 {
-	--background-color: #084298;
+	--background-color: #161D20;
+	background: linear-gradient(to bottom, #161D20 0%, #1D272A 50%, #101619 100%);
+	background-attachment: fixed;
 	--background-color-2: #41e0e4;
 	--background-color-3: #1747c0;
 	--text-color: #ffffff;

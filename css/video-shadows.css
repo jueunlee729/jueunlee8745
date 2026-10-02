@@ -1,0 +1,40 @@
+/* Video only: edge silhouettes over the existing cinematic gradient. */
+.demo-3 .morph-wrap.video-shadows {
+    z-index: -1;
+    pointer-events: none;
+    mask-image: linear-gradient(to right, #000 0%, #000 4%, transparent 12%, transparent 88%, #000 96%, #000 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 4%, transparent 12%, transparent 88%, #000 96%, #000 100%);
+}
+.video-shadow {
+    position: absolute;
+    bottom: -20px;
+    width: clamp(100px, 14vw, 210px);
+    height: clamp(260px, 55vh, 620px);
+    transform-origin: bottom center;
+    animation: videoShadowDrift var(--shadow-duration) ease-in-out var(--shadow-delay) infinite alternate;
+}
+.video-shadow svg { display: block; width: 100%; height: 100%; }
+.video-shadow--foreground { fill: rgb(18, 24, 22); opacity: .17; filter: blur(.3px); }
+.video-shadow--midground { fill: rgb(26, 34, 31); opacity: .10; filter: blur(1.4px); }
+.video-shadow--background { fill: rgb(36, 44, 40); opacity: .06; filter: blur(2.8px); }
+.video-shadow--1 { left: -5vw; --shadow-duration: 12s; --shadow-delay: -5s; --shadow-angle: .8deg; --shadow-x: 2px; }
+.video-shadow--2 { left: -6vw; bottom: -26px; height: 68vh; --shadow-duration: 18s; --shadow-delay: -11s; --shadow-angle: .6deg; --shadow-x: 1.5px; }
+.video-shadow--3 { left: -3vw; bottom: -16px; height: 35vh; --shadow-duration: 27s; --shadow-delay: -19s; --shadow-angle: .4deg; --shadow-x: 1px; }
+.video-shadow--4 { right: -4vw; bottom: -23px; height: 49vh; --shadow-duration: 14s; --shadow-delay: -9s; --shadow-angle: 1deg; --shadow-x: 2.5px; }
+.video-shadow--5 { right: -7vw; bottom: -28px; height: 63vh; --shadow-duration: 16s; --shadow-delay: -3s; --shadow-angle: .7deg; --shadow-x: 1.8px; }
+.video-shadow--6 { right: -3vw; bottom: -18px; height: 31vh; --shadow-duration: 24s; --shadow-delay: -16s; --shadow-angle: .5deg; --shadow-x: 1.2px; }
+@keyframes videoShadowDrift {
+    from { transform: translate(-2px, 0) rotate(calc(var(--shadow-angle) * -1)); }
+    to { transform: translate(var(--shadow-x), 0) rotate(var(--shadow-angle)); }
+}
+@media screen and (max-width: 50em) {
+    .video-shadow--2, .video-shadow--5 { display: none; }
+    .video-shadow { width: 95px; height: 40vh; }
+    .video-shadow--1 { left: -52px; }
+    .video-shadow--3 { left: -46px; height: 25vh; }
+    .video-shadow--4 { right: -50px; height: 36vh; }
+    .video-shadow--6 { right: -44px; height: 23vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .video-shadow { animation: none; }
+}
