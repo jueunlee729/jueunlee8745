@@ -46,6 +46,46 @@
         if (window.Fancybox && typeof window.Fancybox.getInstance === 'function' && window.Fancybox.getInstance()) return true;
         return Array.from(document.querySelectorAll('dialog[open], [role="dialog"], [aria-modal="true"], .modal.show, .fancybox__container, .fancybox-container, #popup, .offcanvas.show')).some(isVisible);
     };
+    let blockedByModal = false;
+    const modalSelector = 'dialog, [role="dialog"], [aria-modal], .modal, .fancybox__container, .fancybox-container, #popup, .offcanvas';
+    const trackedModals = new WeakSet();
+    const modalObserver = new MutationObserver(records => {
+        const changed = records.map(record => {
+            if (record.type === 'attributes') {
+                const el = record.target;
+                if (el.matches(modalSelector)) trackModal(el);
+                return el === document.body || el === document.documentElement || el.matches(modalSelector) ||
+                    record.attributeName === 'aria-modal' ||
+                    (record.attributeName === 'role' && record.oldValue === 'dialog') ||
+                    (record.attributeName === 'class' && /(?:^|\s)(?:modal|offcanvas|fancybox__container|fancybox-container)(?:\s|$)/.test(record.oldValue || ''));
+            }
+            let relevant = false;
+            for (const node of [...record.addedNodes, ...record.removedNodes]) {
+                if (!(node instanceof Element)) continue;
+                if (node.matches(modalSelector)) { trackModal(node); relevant = true; }
+                const nested = node.querySelectorAll(modalSelector);
+                nested.forEach(trackModal);
+                relevant ||= nested.length > 0;
+            }
+            return relevant;
+        }).some(Boolean); // Inspect all records so newly inserted modals get tracked.
+        if (!changed) return; // Ignore animated droplet/grass style updates entirely.
+        blockedByModal = modalOpen();
+        if (blockedByModal && (gesture || settling)) reset();
+    });
+    const trackModal = el => {
+        if (trackedModals.has(el)) return;
+        trackedModals.add(el);
+        // Observe inline visibility changes only on actual modal elements, not on
+        // every droplet/grass node that updates its style on animation frames.
+        modalObserver.observe(el, { attributes: true, attributeOldValue: true,
+            attributeFilter: ['class', 'style', 'hidden', 'aria-hidden', 'aria-modal', 'open', 'role'] });
+    };
+    modalObserver.observe(document.documentElement, {
+        subtree: true, childList: true, attributes: true, attributeOldValue: true,
+        attributeFilter: ['class', 'hidden', 'aria-hidden', 'aria-modal', 'open', 'role']
+    });
+    document.querySelectorAll(modalSelector).forEach(trackModal);
     const previewFor = target => {
         if (previews.has(target)) return previews.get(target);
         const iframe = document.createElement('iframe');
@@ -181,13 +221,14 @@
     window.addEventListener('pointerdown', event => {
         if (gesture && event.pointerId !== gesture.pointerId) { reset(); return; }
         if (settling || event.isPrimary === false || (event.pointerType === 'mouse' && event.button !== 0)) return;
-        if (document.body.classList.contains('loading') || modalOpen() || !(event.target instanceof Element) || event.target.closest(excluded)) return;
+        blockedByModal = modalOpen(); // Read visibility once at the gesture boundary.
+        if (document.body.classList.contains('loading') || blockedByModal || !(event.target instanceof Element) || event.target.closest(excluded)) return;
         gesture = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, dx: 0, width: window.innerWidth, mode: 'pending', direction: -1, samples: [{ x: event.clientX, t: performance.now() }] };
     }, { capture: true, passive: true });
     window.addEventListener('pointermove', event => {
         if (settling && canvas) { event.stopImmediatePropagation(); return; }
         if (!gesture || event.pointerId !== gesture.pointerId || settling) return;
-        if (modalOpen()) { reset(); return; }
+        if (blockedByModal) { reset(); return; }
         const dx = event.clientX - gesture.startX;
         const dy = event.clientY - gesture.startY;
         if (gesture.mode === 'pending') {

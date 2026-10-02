@@ -82,6 +82,11 @@
         s.trail.style.opacity = (1 - fade) * clamp(age / 1.8);
         s.trail.style.setProperty('--dry-front', (12 + fade * 76) + '%');
     });
+    // Draw one recognizable moisture state; previews never start the droplet loop.
+    if (new URLSearchParams(location.search).get('swipe-preview') === '1') {
+        draw();
+        return;
+    }
     const tick = time => {
         frame = null;
         if (reduced.matches || document.hidden) { last = null; return; }

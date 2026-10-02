@@ -8,7 +8,7 @@
     overflow: hidden;
     pointer-events: none;
 }
-.page-swipe-preview-stage { z-index: 20000; visibility: hidden; }
+.page-swipe-preview-stage { z-index: 20000; visibility: hidden; contain: layout paint; }
 .page-swipe-preview-stage.is-visible { visibility: visible; }
 .page-swipe-preview {
     position: absolute;
@@ -20,7 +20,7 @@
     pointer-events: none;
     transform-origin: center;
 }
-.page-swipe-preview.is-current-preview { visibility: visible; }
+.page-swipe-preview.is-current-preview { visibility: visible; will-change: transform, opacity; }
 .page-swipe-canvas { z-index: 20001; will-change: transform; }
 .is-page-swiping, .is-page-swiping * {
     -webkit-user-select: none !important;

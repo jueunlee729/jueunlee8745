@@ -75,12 +75,18 @@ async function touch(page, points, expectHorizontal = false) {
     browser = await chromium.launch({ executablePath: process.env.SWIPE_CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, ignoreHTTPSErrors: true });
     await context.addInitScript(() => {
-        window.__swipePerf = { rafRequests: 0, listeners: {}, styleReads: 0, rectReads: 0 };
+        window.__swipePerf = { rafRequests: 0, listeners: {}, ownListeners: {}, listenerSources: {}, styleReads: 0, rectReads: 0 };
         const raf = window.requestAnimationFrame;
         window.requestAnimationFrame = callback => { window.__swipePerf.rafRequests++; return raf.call(window, callback); };
         const listen = EventTarget.prototype.addEventListener;
         EventTarget.prototype.addEventListener = function(type, ...args) {
             window.__swipePerf.listeners[type] = (window.__swipePerf.listeners[type] || 0) + 1;
+            const source = new Error().stack.match(/\/js\/(demo[123]|moss-mist|video-wet-glass|page-swipe)\.js/);
+            if (source) {
+                window.__swipePerf.ownListeners[type] = (window.__swipePerf.ownListeners[type] || 0) + 1;
+                const key = source[1] + ':' + type;
+                window.__swipePerf.listenerSources[key] = (window.__swipePerf.listenerSources[key] || 0) + 1;
+            }
             return listen.call(this, type, ...args);
         };
         const styles = window.getComputedStyle;
@@ -102,20 +108,25 @@ async function touch(page, points, expectHorizontal = false) {
             const initial = await page.evaluate(() => ({ ...window.__swipePerf }));
             await page.waitForTimeout(600);
             const later = await page.evaluate(() => ({ ...window.__swipePerf }));
-            console.log('Preview work ' + file + ':', later.rafRequests - initial.rafRequests, 'rAF requests / 600ms; pointermove:', later.listeners.pointermove || 0, 'mousemove:', later.listeners.mousemove || 0);
+            console.log('Preview work ' + file + ':', later.rafRequests - initial.rafRequests, 'rAF requests / 600ms; decorative pointermove:', later.ownListeners.pointermove || 0, 'mousemove:', later.ownListeners.mousemove || 0);
             if (!process.env.SWIPE_PERF_BASELINE) {
                 assert.equal(later.rafRequests, initial.rafRequests);
-                assert.equal(later.listeners.pointermove || 0, 0);
-                assert.equal(later.listeners.mousemove || 0, 0);
+                assert.equal(later.ownListeners.pointermove || 0, 0);
+                assert.equal(later.ownListeners.mousemove || 0, 0);
             }
             assert.equal(await page.locator('.page-swipe-preview').count(), 0);
             const playing = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length);
             assert.equal(playing, 0);
         }
         await ready(page, 'index3.html');
+        assert.equal(await page.evaluate(() => window.__swipePerf.listenerSources['page-swipe:pointermove']), 1);
         const initial = await page.evaluate(() => window.__swipePerf.rafRequests);
         await page.waitForTimeout(300);
         assert((await page.evaluate(() => window.__swipePerf.rafRequests)) > initial);
+        for (const file of ['index.html', 'index2.html']) {
+            await ready(page, file);
+            assert((await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length)) > 0);
+        }
     });
     await check('performance: drag reuses frames and performs no repeated style/layout reads', async () => {
         await ready(page, 'index3.html');
@@ -244,6 +255,16 @@ async function touch(page, points, expectHorizontal = false) {
         await page.mouse.move(950, 400, { steps: 6 }); await page.mouse.up();
         assert.equal(await page.locator('.page-swipe-canvas').count(), 0);
         await page.evaluate(() => document.querySelector('dialog').remove());
+    });
+    await check('modal visibility changes cancel a drag without waiting for another pointermove', async () => {
+        await ready(page, 'index3.html');
+        await drag(page, -100, { keepDown: true });
+        await page.waitForSelector('.page-swipe-canvas');
+        await page.evaluate(() => document.querySelector('#popup').style.display = 'block');
+        await clean(page);
+        await page.mouse.up();
+        assert.equal(new URL(page.url()).pathname, '/index3.html');
+        await page.evaluate(() => document.querySelector('#popup').style.display = 'none');
     });
     await check('cancel, lost capture, resize and visibility interruption reset safely', async () => {
         for (const reason of ['pointercancel', 'lostpointercapture', 'resize', 'visibility']) {
