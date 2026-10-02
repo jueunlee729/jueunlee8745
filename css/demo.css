@@ -118,7 +118,7 @@ a:focus {
 	fill: var(--background-color-3);
 }
 
-/* SVG Morph */
+/* Independent rain trails behind the existing content. */
 .morph-wrap {
 	position: fixed;
 	top: 0;
@@ -126,17 +126,221 @@ a:focus {
 	bottom: 0;
 	width: 100%;
 	overflow: hidden;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	pointer-events: none;
 }
 
+/* Inert fallback until the background initializer removes the old SVG. */
 .morph {
-	position: relative;
-	height: 100%;
-	fill: var(--background-color-2);
-	flex: none;
+	display: none;
+}
+
+.rain-line {
+	position: absolute;
+	top: 0;
+	left: var(--rain-x);
+	width: var(--rain-width, 1px);
+	height: var(--rain-length);
+	/* Opacity is applied once, so the reflected light stays visible. */
+	background: linear-gradient(to bottom, transparent, rgb(255, 255, 255) 18%, rgb(255, 255, 255) 82%, transparent);
+	opacity: var(--rain-opacity, .24);
+	filter: blur(.3px);
+	transform-origin: top center;
+	animation: rainFall var(--rain-duration) linear var(--rain-delay) infinite;
+}
+
+.rain-line--foreground {
+	filter: blur(.6px);
+}
+
+.rain-line--background {
+	background: linear-gradient(to bottom, transparent, rgb(210, 225, 235) 18%, rgb(210, 225, 235) 82%, transparent);
+}
+
+.rain-line:nth-child(1) {
+	--rain-x: 3%;
+	--rain-length: 110px;
+	--rain-width: 1px;
+	--rain-opacity: 0.2;
+	--rain-duration: 14s;
+	--rain-delay: -2s;
+	--rain-angle: 0deg;
+	--rain-start: -30vh;
+	--rain-end: 120vh;
+}
+
+.rain-line:nth-child(2) {
+	--rain-x: 10%;
+	--rain-length: 280px;
+	--rain-width: 1.5px;
+	--rain-opacity: 0.32;
+	--rain-duration: 6.5s;
+	--rain-delay: -3s;
+	--rain-angle: -2deg;
+	--rain-start: -40vh;
+	--rain-end: 125vh;
+}
+
+.rain-line:nth-child(3) {
+	--rain-x: 17%;
+	--rain-length: 180px;
+	--rain-width: 1px;
+	--rain-opacity: 0.24;
+	--rain-duration: 9s;
+	--rain-delay: -4s;
+	--rain-angle: 0deg;
+	--rain-start: -25vh;
+	--rain-end: 115vh;
+}
+
+.rain-line:nth-child(4) {
+	--rain-x: 29%;
+	--rain-length: 130px;
+	--rain-width: 1px;
+	--rain-opacity: 0.22;
+	--rain-duration: 12s;
+	--rain-delay: -5s;
+	--rain-angle: 0deg;
+	--rain-start: -20vh;
+	--rain-end: 110vh;
+}
+
+.rain-line:nth-child(5) {
+	--rain-x: 61%;
+	--rain-length: 220px;
+	--rain-width: 1px;
+	--rain-opacity: 0.26;
+	--rain-duration: 10s;
+	--rain-delay: -6s;
+	--rain-angle: 0deg;
+	--rain-start: -30vh;
+	--rain-end: 120vh;
+}
+
+.rain-line:nth-child(6) {
+	--rain-x: 76%;
+	--rain-length: 320px;
+	--rain-width: 1.5px;
+	--rain-opacity: 0.3;
+	--rain-duration: 7.5s;
+	--rain-delay: -7s;
+	--rain-angle: 3deg;
+	--rain-start: -40vh;
+	--rain-end: 130vh;
+}
+
+.rain-line:nth-child(7) {
+	--rain-x: 87%;
+	--rain-length: 160px;
+	--rain-width: 1px;
+	--rain-opacity: 0.24;
+	--rain-duration: 8.5s;
+	--rain-delay: -8s;
+	--rain-angle: 0deg;
+	--rain-start: -25vh;
+	--rain-end: 115vh;
+}
+
+.rain-line:nth-child(8) {
+	--rain-x: 97%;
+	--rain-length: 100px;
+	--rain-width: 1px;
+	--rain-opacity: 0.18;
+	--rain-duration: 15s;
+	--rain-delay: -9s;
+	--rain-angle: 0deg;
+	--rain-start: -20vh;
+	--rain-end: 120vh;
+}
+
+.rain-line:nth-child(9) {
+	--rain-x: 23%;
+	--rain-length: 240px;
+	--rain-width: 1px;
+	--rain-opacity: 0.23;
+	--rain-duration: 11s;
+	--rain-delay: -10s;
+	--rain-angle: -3deg;
+	--rain-start: -35vh;
+	--rain-end: 125vh;
+}
+
+.rain-line:nth-child(10) {
+	--rain-x: 38%;
+	--rain-length: 90px;
+	--rain-width: 1px;
+	--rain-opacity: 0.2;
+	--rain-duration: 13s;
+	--rain-delay: -11s;
+	--rain-angle: 0deg;
+	--rain-start: -25vh;
+	--rain-end: 110vh;
+}
+
+.rain-line:nth-child(11) {
+	--rain-x: 52%;
+	--rain-length: 260px;
+	--rain-width: 1px;
+	--rain-opacity: 0.24;
+	--rain-duration: 9.5s;
+	--rain-delay: -12s;
+	--rain-angle: 0deg;
+	--rain-start: -40vh;
+	--rain-end: 130vh;
+}
+
+.rain-line:nth-child(12) {
+	--rain-x: 69%;
+	--rain-length: 140px;
+	--rain-width: 1px;
+	--rain-opacity: 0.34;
+	--rain-duration: 5.5s;
+	--rain-delay: -2.5s;
+	--rain-angle: 4deg;
+	--rain-start: -30vh;
+	--rain-end: 120vh;
+}
+
+.rain-line:nth-child(13) {
+	--rain-x: 82%;
+	--rain-length: 360px;
+	--rain-width: 1px;
+	--rain-opacity: 0.28;
+	--rain-duration: 10.5s;
+	--rain-delay: -4.5s;
+	--rain-angle: 0deg;
+	--rain-start: -35vh;
+	--rain-end: 125vh;
+}
+
+.rain-line:nth-child(14) {
+	--rain-x: 93%;
+	--rain-length: 200px;
+	--rain-width: 1px;
+	--rain-opacity: 0.21;
+	--rain-duration: 11.5s;
+	--rain-delay: -6.5s;
+	--rain-angle: 0deg;
+	--rain-start: -20vh;
+	--rain-end: 115vh;
+}
+
+@keyframes rainFall {
+	from { transform: translate3d(0, var(--rain-start), 0) rotate(var(--rain-angle)); }
+	to { transform: translate3d(0, var(--rain-end), 0) rotate(var(--rain-angle)); }
+}
+
+@media screen and (max-width: 50em) {
+	.rain-line { filter: blur(.2px); }
+	.rain-line--foreground { opacity: .28; filter: blur(.3px); }
+	.rain-line:nth-child(n + 9) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rain-line {
+		animation: none;
+		transform: translate3d(0, 18vh, 0) rotate(var(--rain-angle));
+	}
+	.rain-line:nth-child(even) { top: 42%; }
 }
 
 .content-wrap {
@@ -775,12 +979,6 @@ iframe{
 	--text-color: #ffffff;
 	--link-color: #ffa009;
 	--link-hover-color: #41e0e4;
-}
-
-.demo-3 .morph {
-	fill: none;
-	stroke-width: 12px;
-	stroke: #ffa009;
 }
 
 @media screen and (max-width: 50em) {
