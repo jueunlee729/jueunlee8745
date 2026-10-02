@@ -1,0 +1,61 @@
+/* Video-only attached droplets. No portfolio element receives these transforms. */
+.video-wet-glass, .video-glass-haze {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+.video-glass-haze {
+    opacity: .035;
+    filter: blur(16px);
+    background: radial-gradient(ellipse at 14% 63%, rgba(215, 228, 224, .3), transparent 36%),
+                radial-gradient(ellipse at 83% 32%, rgba(225, 235, 232, .2), transparent 30%),
+                radial-gradient(ellipse at 57% 85%, rgba(215, 228, 224, .18), transparent 40%);
+}
+.glass-drop {
+    position: absolute;
+    left: var(--drop-start-x);
+    top: var(--drop-start-y);
+    width: 16px;
+    height: var(--drop-travel);
+}
+.glass-trail {
+    position: absolute;
+    inset: 0;
+    width: 16px;
+    height: 100%;
+    clip-path: inset(0 0 100% 0);
+    mask-image: linear-gradient(to bottom, transparent, #000 var(--dry-front, 12%), #000);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--dry-front, 12%), #000);
+}
+.glass-trail path { fill: none; stroke-width: var(--trail-width); stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.glass-drop-head {
+    position: absolute;
+    left: 8px;
+    top: 0;
+    margin-left: calc(var(--head-width) * -.5);
+    margin-top: calc(var(--head-height) * -.5);
+    width: var(--head-width);
+    height: var(--head-height);
+    border-radius: 47% 53% 44% 48% / 44% 46% 56% 54%;
+    background: linear-gradient(to bottom, rgba(245, 250, 248, .24), rgba(220, 232, 228, .14) 78%, rgba(100, 120, 115, .08));
+    opacity: 0;
+}
+.glass-moisture-mark {
+    position: absolute;
+    width: 1px;
+    border-radius: 50%;
+    background: linear-gradient(to bottom, transparent, rgba(220, 232, 228, .035), transparent);
+    transform: rotate(.6deg);
+}
+.glass-moisture-mark--1 { left: 14%; top: 58%; height: 28px; }
+.glass-moisture-mark--2 { right: 17%; top: 22%; height: 42px; }
+.glass-moisture-mark--3 { right: 8%; top: 74%; height: 21px; }
+@media screen and (max-width: 50em) {
+    .glass-drop:nth-child(n + 6) { display: none; }
+    .video-glass-haze { opacity: .02; filter: blur(12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .glass-drop { display: none; }
+}

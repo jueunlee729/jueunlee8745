@@ -14,9 +14,9 @@
     animation: videoShadowDrift var(--shadow-duration) ease-in-out var(--shadow-delay) infinite alternate;
 }
 .video-shadow svg { display: block; width: 100%; height: 100%; }
-.video-shadow--foreground { fill: rgb(18, 24, 22); opacity: .17; filter: blur(.3px); }
-.video-shadow--midground { fill: rgb(26, 34, 31); opacity: .10; filter: blur(1.4px); }
-.video-shadow--background { fill: rgb(36, 44, 40); opacity: .06; filter: blur(2.8px); }
+.video-shadow--foreground { fill: rgb(18, 24, 22); opacity: .145; filter: blur(.3px); }
+.video-shadow--midground { fill: rgb(26, 34, 31); opacity: .085; filter: blur(1.4px); }
+.video-shadow--background { fill: rgb(36, 44, 40); opacity: .051; filter: blur(2.8px); }
 .video-shadow--1 { left: -5vw; --shadow-duration: 12s; --shadow-delay: -5s; --shadow-angle: .8deg; --shadow-x: 2px; }
 .video-shadow--2 { left: -6vw; bottom: -26px; height: 68vh; --shadow-duration: 18s; --shadow-delay: -11s; --shadow-angle: .6deg; --shadow-x: 1.5px; }
 .video-shadow--3 { left: -3vw; bottom: -16px; height: 35vh; --shadow-duration: 27s; --shadow-delay: -19s; --shadow-angle: .4deg; --shadow-x: 1px; }
