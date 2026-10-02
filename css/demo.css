@@ -118,7 +118,7 @@ a:focus {
 	fill: var(--background-color-3);
 }
 
-/* Independent rain trails behind the existing content. */
+/* Thin water streaks behind the existing content. */
 .morph-wrap {
 	position: fixed;
 	top: 0;
@@ -140,8 +140,9 @@ a:focus {
 	left: var(--rain-x);
 	width: var(--rain-width, 1px);
 	height: var(--rain-length);
-	/* Opacity is applied once, so the reflected light stays visible. */
-	background: linear-gradient(to bottom, transparent, rgb(255, 255, 255) 18%, rgb(255, 255, 255) 82%, transparent);
+	/* A faint upper trace gathers into a denser lower water trail. */
+	background: linear-gradient(to bottom, transparent 0%, rgba(var(--rain-color), .08) 12%, rgba(var(--rain-color), .4) 40%, rgba(var(--rain-color), .72) 68%, rgb(var(--rain-color)) 93%, rgba(var(--rain-color), .4) 100%);
+	--rain-color: 225, 235, 242;
 	opacity: var(--rain-opacity, .24);
 	filter: blur(.3px);
 	transform-origin: top center;
@@ -149,18 +150,32 @@ a:focus {
 }
 
 .rain-line--foreground {
-	filter: blur(.6px);
+	filter: blur(.5px);
 }
 
 .rain-line--background {
-	background: linear-gradient(to bottom, transparent, rgb(210, 225, 235) 18%, rgb(210, 225, 235) 82%, transparent);
+	--rain-color: 210, 225, 235;
+	filter: blur(.2px);
+}
+
+/* A tapered thickening of the streak itself, without a separate bead. */
+.rain-line--pooled::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 3px;
+	height: 7px;
+	transform: translateX(-50%);
+	clip-path: polygon(43% 0, 57% 0, 72% 52%, 80% 86%, 60% 100%, 40% 100%, 20% 86%, 28% 52%);
+	background: linear-gradient(to bottom, transparent, rgba(var(--rain-color), .6) 55%, rgba(var(--rain-color), .85));
 }
 
 .rain-line:nth-child(1) {
 	--rain-x: 3%;
 	--rain-length: 110px;
 	--rain-width: 1px;
-	--rain-opacity: 0.2;
+	--rain-opacity: 0.14;
 	--rain-duration: 14s;
 	--rain-delay: -2s;
 	--rain-angle: 0deg;
@@ -196,7 +211,7 @@ a:focus {
 	--rain-x: 29%;
 	--rain-length: 130px;
 	--rain-width: 1px;
-	--rain-opacity: 0.22;
+	--rain-opacity: 0.18;
 	--rain-duration: 12s;
 	--rain-delay: -5s;
 	--rain-angle: 0deg;
@@ -232,7 +247,7 @@ a:focus {
 	--rain-x: 87%;
 	--rain-length: 160px;
 	--rain-width: 1px;
-	--rain-opacity: 0.24;
+	--rain-opacity: 0.23;
 	--rain-duration: 8.5s;
 	--rain-delay: -8s;
 	--rain-angle: 0deg;
@@ -244,7 +259,7 @@ a:focus {
 	--rain-x: 97%;
 	--rain-length: 100px;
 	--rain-width: 1px;
-	--rain-opacity: 0.18;
+	--rain-opacity: 0.16;
 	--rain-duration: 15s;
 	--rain-delay: -9s;
 	--rain-angle: 0deg;
@@ -256,7 +271,7 @@ a:focus {
 	--rain-x: 23%;
 	--rain-length: 240px;
 	--rain-width: 1px;
-	--rain-opacity: 0.23;
+	--rain-opacity: 0.22;
 	--rain-duration: 11s;
 	--rain-delay: -10s;
 	--rain-angle: -3deg;
@@ -266,9 +281,9 @@ a:focus {
 
 .rain-line:nth-child(10) {
 	--rain-x: 38%;
-	--rain-length: 90px;
+	--rain-length: 105px;
 	--rain-width: 1px;
-	--rain-opacity: 0.2;
+	--rain-opacity: 0.19;
 	--rain-duration: 13s;
 	--rain-delay: -11s;
 	--rain-angle: 0deg;
@@ -280,7 +295,7 @@ a:focus {
 	--rain-x: 52%;
 	--rain-length: 260px;
 	--rain-width: 1px;
-	--rain-opacity: 0.24;
+	--rain-opacity: 0.25;
 	--rain-duration: 9.5s;
 	--rain-delay: -12s;
 	--rain-angle: 0deg;
@@ -292,7 +307,7 @@ a:focus {
 	--rain-x: 69%;
 	--rain-length: 140px;
 	--rain-width: 1px;
-	--rain-opacity: 0.34;
+	--rain-opacity: 0.29;
 	--rain-duration: 5.5s;
 	--rain-delay: -2.5s;
 	--rain-angle: 4deg;
@@ -316,7 +331,7 @@ a:focus {
 	--rain-x: 93%;
 	--rain-length: 200px;
 	--rain-width: 1px;
-	--rain-opacity: 0.21;
+	--rain-opacity: 0.2;
 	--rain-duration: 11.5s;
 	--rain-delay: -6.5s;
 	--rain-angle: 0deg;

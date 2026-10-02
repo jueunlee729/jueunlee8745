@@ -4,9 +4,9 @@
 	const background = document.querySelector('.morph-wrap');
 	if (!background || background.querySelector('.rain-line')) return;
 	background.setAttribute('aria-hidden', 'true');
-	const lines = ["background","foreground","midground","background","midground","foreground","midground","background","midground","background","midground","foreground","midground","background"].map(depth => {
+	const lines = ["background","foreground","midground","background","midground","foreground","midground","background","midground","background","midground","foreground","midground","background"].map((depth, index) => {
 		const line = document.createElement('span');
-		line.className = 'rain-line rain-line--' + depth;
+		line.className = 'rain-line rain-line--' + depth + ([1, 3, 6, 12].includes(index) ? ' rain-line--pooled' : '');
 		return line;
 	});
 	background.replaceChildren(...lines);
