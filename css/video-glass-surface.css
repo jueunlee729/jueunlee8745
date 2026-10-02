@@ -1,0 +1,46 @@
+/* Separate static decorative surface. Never filters or distorts portfolio content. */
+.video-glass-surface { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.video-glass-film {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 47vw 62vh at 8% 72%, rgba(225, 236, 232, .06), transparent 78%),
+        radial-gradient(ellipse 58vw 29vh at 76% 27%, rgba(235, 242, 239, .05), transparent 82%),
+        radial-gradient(ellipse 36vw 53vh at 63% 92%, rgba(205, 220, 214, .04), transparent 80%),
+        radial-gradient(ellipse 31vw 44vh at 31% 12%, rgba(225, 236, 232, .035), transparent 84%),
+        radial-gradient(ellipse 45vw 24vh at 92% 61%, rgba(235, 242, 239, .055), transparent 81%);
+}
+.video-glass-texture { position: absolute; inset: 0; width: 100%; height: 100%; }
+.video-glass-moisture--fine { fill: rgba(225, 236, 232, .06); }
+.video-glass-moisture--medium { fill: rgba(225, 236, 232, .09); }
+.video-glass-moisture--dense { fill: rgba(235, 242, 239, .12); }
+.video-glass-micro-rim { fill: none; stroke: rgba(16, 25, 22, .08); stroke-width: .35; }
+.video-glass-smear {
+    position: absolute;
+    border-radius: 44% 56% 39% 61% / 28% 46% 54% 72%;
+    background: linear-gradient(175deg, transparent, rgba(220, 232, 228, var(--smear-alpha)) 31%, rgba(180, 198, 192, .025) 67%, transparent);
+    filter: blur(var(--smear-blur));
+    transform: rotate(var(--smear-angle));
+}
+.video-glass-smear--1 { left: 9%; top: 23%; width: 18px; height: 220px; --smear-alpha: .06; --smear-blur: 8px; --smear-angle: -7deg; }
+.video-glass-smear--2 { right: 12%; top: 49%; width: 22px; height: 190px; --smear-alpha: .055; --smear-blur: 11px; --smear-angle: 5deg; }
+.video-glass-smear--3 { left: 24%; top: 71%; width: 12px; height: 110px; --smear-alpha: .04; --smear-blur: 7px; --smear-angle: -3deg; }
+.video-glass-smear--4 { right: 6%; top: 11%; width: 20px; height: 240px; --smear-alpha: .065; --smear-blur: 12px; --smear-angle: 9deg; }
+.video-glass-smear--5 { left: 17%; top: 9%; width: 9px; height: 150px; --smear-alpha: .035; --smear-blur: 6px; --smear-angle: 4deg; }
+.video-glass-smear--6 { right: 23%; top: 68%; width: 16px; height: 130px; --smear-alpha: .05; --smear-blur: 9px; --smear-angle: -5deg; }
+.video-glass-reflection {
+    position: absolute;
+    inset: 0;
+    filter: blur(12px);
+    background:
+        linear-gradient(103deg, transparent 0%, rgba(240, 248, 245, .025) 3%, transparent 10%, transparent 100%),
+        linear-gradient(83deg, transparent 0%, transparent 89%, rgba(240, 248, 245, .018) 96%, transparent 100%);
+}
+@media screen and (max-width: 50em) {
+    .video-glass-film { opacity: .8; }
+    .video-glass-texture { opacity: .85; }
+    .video-glass-smear--3, .video-glass-smear--4, .video-glass-smear--6 { display: none; }
+    .video-glass-smear { filter: blur(7px); }
+    .video-glass-reflection { opacity: .8; filter: blur(8px); }
+}
+/* All glass surface elements remain static, also with reduced motion. */
