@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+body{
+    width: 1200px;
+    margin: auto;
+    background-color:antiquewhite;
+    --first-color: #dfa795;
+}
+
+header{
+    height: 150px;
+}
+
+hr {
+    height: 1px;
+    background: #dfa795;
+    border: 0;
+}
+
+.title h1{
+    font-size: 3rem;
+    text-align: center;
+    line-height: 3;
+    
+}
+
+.title span{
+    color: var(--first-color);
+}
+
+section{
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.concept img{
+    width: 100%;
+}
+
+.button_section {
+    margin: 2rem 2rem;
+    display: flex;
+}
+
+.video {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    /* flex-direction: column; */
+}
+
+.video .web {
+    border: 10px solid var(--first-color);
+    flex-wrap: wrap;
+    margin: 2rem;
+}
+
+.video .web img {
+    width: 50rem;
+    height: 100%;
+    flex-wrap: wrap;
+}
+
+.video .mobile {
+    border: 10px solid var(--first-color);
+    flex-wrap: wrap;
+}
+
+.video .mobile img {
+    width: 20rem;
+    height: 100%;
+    flex-wrap: wrap;
+}
+
+.design{
+    padding-top: 5rem;
+}
+
+.web{
+    margin-left: 1rem;
+}
+
+.design h1{
+    font-size: 3rem;
+    text-align: center;
+    line-height: 3;
+}
+
+.design .web{
+    overflow: scroll;
+    border: solid 1px rgb(128, 128, 128);
+    height: 500px; 
+    width: 800px;
+    float: left;
+}
+
+.design .web h3{
+    font-size: 2rem;
+    text-align: center;
+}
+
+.design .web img{
+    width: 100%;
+    border-top: 1px solid #424242;
+}
+
+.design .mobile{
+    overflow: scroll;
+    border: solid 1px rgb(109, 109, 109);
+    height: 500px; 
+    width: 350px;
+    float: left;
+    margin-left: 1.5rem;
+}
+
+.design .mobile h3{
+    font-size: 2rem;
+    text-align: center;
+    padding: .5rem;
+}
+
+.design .mobile img{
+    width: 100%;
+    border-top: 1px solid #a7a7a7;
+}
+
+/* scrollbar */
+
+.web::-webkit-scrollbar{
+    width: 15px;
+}
+.web::-webkit-scrollbar-track{
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+.web::-webkit-scrollbar-thumb{
+    background-color: #686868;
+    border-radius: 5px;
+}
+.mobile::-webkit-scrollbar{
+    width: 15px;
+}
+.mobile::-webkit-scrollbar-track{
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+.mobile::-webkit-scrollbar-thumb{
+    background-color: #686868;
+    border-radius: 5px;
+}
+
+/* footer */
+footer{
+    clear: both;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 3rem;
+}
+.footer1{
+    clear: both;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 0;
+    margin-bottom: 3rem;
+}
+.btn{
+    width: 6rem;
+    height: 3rem;
+    font-size: 1.2rem;
+    justify-content: flex-end;
+    list-style: none;
+    background: var(--first-color);
+    border: 0;
+}
+
+.btn:hover {
+    color: #424242;
+}
+
+.btn a{
+    text-decoration: none;
+    color: #ffffff;
+}
+
+
+/* 화면너비 0~768px */
+@media(max-width:768px){
+    body{
+        width: 768px;
+    }
+    .project{
+        width: 758px;
+        margin: auto;
+    }
+    .title{
+        width: 758px;
+    }
+    .title h1{
+        text-align: center;
+    }
+    .concept{
+        width: 758px;
+    }
+    .concept img{
+        width: 100%;
+    }
+    .video .web {
+        width: 30rem;
+    }
+    .video .web img {
+        width: 100%;
+    }
+    .design{
+        width: 758px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 1rem;
+    }
+    .design h1{
+        font-size: 2rem;
+        text-align: center;
+    }
+    .design .web{
+        width: 650px;
+        height: 500px;
+        float: none;
+    }
+    .design .mobile{
+        width: 500px;
+        height: 500px;
+        margin-left: 0;
+    }
+}
+
+
+/* 화면너비 0~420px */
+@media(max-width:420px){
+    body{
+        width: 420px;
+    }
+    .project{
+        width: 350px;
+        margin: auto;
+    }
+    header{
+        height: auto;
+    }
+    .title{
+        width: 350px;
+    }
+    .title h1{
+        text-align: center;
+        font-size: 2rem;
+    }
+    .concept{
+        width: 350px;
+    }
+    .concept img{
+        width: 100%;
+    }
+    .design{
+        width: 350px;
+        padding: 0;
+        gap:0.5rem;
+    }
+    .design h1{
+        font-size: 1.5rem;
+    }
+    .design .web{
+        width: 350px;
+        height: 290px;
+    }
+    .design .mobile{
+        width: 250px;
+        height: 400px;
+    }
+    footer{
+        height: 10px;
+    }
+    .btn{
+        width: 4rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+}

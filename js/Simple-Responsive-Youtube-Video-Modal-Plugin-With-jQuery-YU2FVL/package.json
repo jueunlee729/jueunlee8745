@@ -1,0 +1,34 @@
+{
+  "name": "jquery-youtube-url-to-fullscreen-video-lightbox",
+  "version": "0.1.2",
+  "description": "gulp tasks for yu2fvl jquery plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darkylmnx/jQuery-Youtube-Url-To-FullScreen-Video-Lightbox.git"
+  },
+  "author": "darkylmnx <darkun91@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/darkylmnx/jQuery-Youtube-Url-To-FullScreen-Video-Lightbox/issues"
+  },
+  "homepage": "https://github.com/darkylmnx/jQuery-Youtube-Url-To-FullScreen-Video-Lightbox#readme",
+  "devDependencies": {
+    "gulp": "~3.9.1",
+    "gulp-jshint": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.1",
+    "uglify-js": "^2.6.2",
+    "through2": "^2.0.1",
+    "deap": "^1.0.0",
+    "gulp-util": "^3.0.7",
+    "fancy-log": "^1.2.0",
+    "vinyl-sourcemaps-apply": "^0.2.1",
+    "uglify-save-license": "^0.4.1",
+    "isobject": "^2.0.0",
+    "jshint": "^2.9.1"
+  }
+}

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Portfolio | KMJ | Videos</title>
+		<meta name="description" content="A page background effect where SVG shapes morph and transform on scroll" />
+		<meta name="keywords" content="background, svg, morph, animation, scroll, shape, web development, css, javascript" />
+		<meta name="author" content="Codrops" />
+		<link rel="shortcut icon" href="android-icon-96x96.png">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css" />
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo.css" />
+		<link rel="stylesheet" type="text/css" href="logo/pater.css" />
+		<script>
+			document.documentElement.className = 'js';
+			var supportsCssVars = function() {
+				var s = document.createElement('style'),
+				support;
+
+				s.innerHTML = "root: { --tmp-var: bold; }";
+				document.head.appendChild(s);
+				support = !!(window.CSS && window.CSS.supports && window.CSS.supports('font-weight', 'var(--tmp-var)'));
+				s.parentNode.removeChild(s);
+				return support;
+			}
+			if (!supportsCssVars()) alert('Please view this demo in a modern browser that supports CSS Variables.')
+		</script>
+	</head>
+	<body class="demo-3 loading">
+		<svg class="hidden">
+			<symbol id="icon-arrow" viewBox="0 0 24 24">
+				<title>arrow</title>
+				<polygon points="6.3,12.8 20.9,12.8 20.9,11.2 6.3,11.2 10.2,7.2 9,6 3.1,12 9,18 10.2,16.8 "/>
+			</symbol>
+			<symbol id="icon-drop" viewBox="0 0 24 24">
+				<title>drop</title>
+				<path d="M12,21c-3.6,0-6.6-3-6.6-6.6C5.4,11,10.8,4,11.4,3.2C11.6,3.1,11.8,3,12,3s0.4,0.1,0.6,0.3c0.6,0.8,6.1,7.8,6.1,11.2C18.6,18.1,15.6,21,12,21zM12,4.8c-1.8,2.4-5.2,7.4-5.2,9.6c0,2.9,2.3,5.2,5.2,5.2s5.2-2.3,5.2-5.2C17.2,12.2,13.8,7.3,12,4.8z"/><path d="M12,18.2c-0.4,0-0.7-0.3-0.7-0.7s0.3-0.7,0.7-0.7c1.3,0,2.4-1.1,2.4-2.4c0-0.4,0.3-0.7,0.7-0.7c0.4,0,0.7,0.3,0.7,0.7C15.8,16.5,14.1,18.2,12,18.2z"/>
+			</symbol>
+			<symbol id="shape-demo" viewBox="0 0 200 100">
+				<title>shape demo</title>
+				<path d="M 6.144,74.1 C 20.4,107.4 70.13,94.33 94.22,95.74 121.3,97.41 130.8,101.1 154.7,99.38 178.6,97.72 201.9,78.95 199.4,46.86 197.1,14.96 174.9,4.781 161.4,1.827 147.9,-1.128 119.8,8.284 105.6,8.766 85.34,9.449 81.91,7.628 51.08,2.334 17.26,-3.482 -8.105,40.84 6.144,74.1 Z" />
+			</symbol>
+		</svg>
+		<main>
+			<div class="morph-wrap">
+				<svg class="morph" width="1400" height="770" viewBox="0 0 1400 770">
+					<polygon points="700,84.4 1047.1,685.6 352.9,685.6 352.9,685.6 352.9,685.6 352.9,685.6"/>
+				</svg>
+			</div>
+			<div class="content content--fixed">
+				<header class="codrops-header">
+					<div class="codrops-links">
+						<svg class="decoshape" viewBox="0 0 200 100" width="100%" height="100%" preserveAspectRatio="none">
+							<path d="M 10.45,74.41 C 39.4,110.8 72.59,67.27 95.98,68.68 122.3,70.35 131.5,101.4 154.7,99.69 177.9,98.03 200.5,79.26 198.1,47.17 195.9,15.27 174.6,-0.3279 151.8,0.9941 128.6,2.581 126,16.86 107,22.76 88.26,28.67 88.87,12.36 60.37,1.787 31.79,-8.877 -18.61,37.92 10.45,74.41 Z" />
+						</svg>
+						<a class="codrops-icon codrops-icon--prev"
+						href="index.html" title="Previous page"><svg
+							class="icon icon--arrow">
+							<use xlink:href="#icon-arrow"></use>
+						</svg></a>
+					<a class="codrops-icon codrops-icon--next" href="index2.html"
+						title="Next page"><svg class="icon icon--next">
+							<use  xlink:href="#icon-arrow"></use>
+						</svg></a>
+					</div>
+					<h1 class="codrops-header__title">PortFolio | Kim MinJi</h1>
+				</header>
+				<nav class="demos">
+					<a class="demo" href="index2.html"><svg class="decoshape" preserveAspectRatio="none"><use xlink:href="#shape-demo"></use></svg>Web/App</a>
+					<a class="demo" href="index.html"><svg class="decoshape"><use xlink:href="#shape-demo"></use></svg>Graphic</a>
+					<a class="demo demo--current" href="index3.html"><svg class="decoshape"><use xlink:href="#shape-demo"></use></svg>Video</a>
+				</nav>
+				<a class="pater" href="#">
+					<img src="img/nametag_white.png" alt="nametag">
+					
+				</a>
+				<div class="deco deco--title">PortFolio | Videos</div>
+			</div>
+			<div class="content-wrap">
+				<div class="content content--layout content--layout-1">
+					<a href="https://youtu.be/CLAg1V7HaH0" class="video__img" data-fancybox="gallery-b">
+						<div class="video__img"></div>
+					</a>
+					<a href="https://youtu.be/CLAg1V7HaH0" class="content__img" data-fancybox="gallery-c">
+						<img class="content__img index3__img" src="img/video1.jpg" alt="Some image" />
+					</a>
+					
+					
+					<h3 class="content__title">healing</h3>
+					<p class="content__author">Video Healing </p>
+					<p class="content__desc">가을의 풍경을 주제로 만든 <br> 제주 홍보 영상</p>
+					<!-- <a href="#" class="content__link" id="openPopup">Discover</a> -->
+					<a href="https://youtu.be/CLAg1V7HaH0" class="content__link" data-fancybox="gallery-a">Discover</a>
+				</div>
+			</div>
+			<!-- 팝업창 -->
+			<div id="popup" style="display: none; text-align: center;">
+				<div id="closePopup">x</div>
+				<div id="videoFrame">
+					<!-- <img id="videoFrame" src="mobile/introduce_mobile.png" alt=""> -->
+					<iframe img src="img/video1.mp4" width="1080" height="540" frameborder="0"
+						allowfullscreen></iframe>
+				</div>
+			</div>
+
+			<div class="content-wrap">
+				<div class="content content--layout content--layout-6">
+					<a href="https://youtu.be/ZnaUlSJ6eW0" class="video__img" data-fancybox="gallery-b">
+						<div class="video__img"></div>
+					</a>
+					<a href="https://youtu.be/ZnaUlSJ6eW0" class="content__img" data-fancybox="gallery-c">
+						<img class="content__img" src="img/video2-2.png" alt="Some image" />
+					</a>
+					
+					
+					<h3 class="content__title">Commercial</h3>
+					<p class="content__author">Commercial <br> of Dr.G </p>
+					<p class="content__desc">화장품 브랜드 Dr.G의 제품 '레드 블레미쉬 클리어 크림'을 소재로 한 홍보영상</p>
+					<!-- <a href="#" class="content__link">Discover</a> -->
+					<a href="https://youtu.be/ZnaUlSJ6eW0" class="content__link" data-fancybox="gallery-a">Discover</a>
+				</div>
+			</div>
+			<div class="content-wrap">
+				<div class="content content--layout content--layout-3">
+					<a href="https://youtu.be/_Rv-QOinN-E" class="video__img" data-fancybox="gallery-b">
+						<div class="video__img"></div>
+					</a>
+					<a href="https://youtu.be/_Rv-QOinN-E" class="content__img" data-fancybox="gallery-c">
+						<img class="content__img" src="img/video3-1.png" alt="Some image" />
+					</a>
+					
+					
+					<h3 class="content__title">Slide</h3>
+					<p class="content__author">Slide_show</p>
+					<p class="content__desc">패션을 주제로 한 <br> 슬라이드쇼 효과 영상</p>
+					<a href="https://youtu.be/_Rv-QOinN-E" class="content__link" data-fancybox="gallery-a">Discover</a>
+				</div>
+			</div>
+			<div class="content-wrap">
+				<div class="content content--layout content--layout-2">
+					<a href="https://youtu.be/91T5-pgJlbk" class="video__img" data-fancybox="gallery-b">
+						<div class="video__img"></div>
+					</a>
+					<a href="https://youtu.be/91T5-pgJlbk" class="content__img" data-fancybox="gallery-c">
+						<img class="content__img" src="img/video4.png" alt="Some image" />
+					</a>
+					
+					
+					<h3 class="content__title">TYPO</h3>
+					<p class="content__author">Typography <br> Kinetic</p>
+					<p class="content__desc">디자인에 흥미를 가지게 된 계기를 담은  자기소개 타이포그래피 영상</p>
+					<a href="https://youtu.be/91T5-pgJlbk" class="content__link" data-fancybox="gallery-a">Discover</a>
+				</div>
+			</div>
+			<!-- <div class="content-wrap">
+				<div class="content content--layout content--layout-1">
+					<img class="content__img" src="img/1.jpg" alt="Some image" />
+					<h3 class="content__title">revert</h3>
+					<p class="content__author">Gregory Mourisha</p>
+					<p class="content__desc">Finding the heart when paradise is lost.</p>
+					<a href="#" class="content__link">Discover</a>
+				</div>
+			</div> -->
+			<!-- Related demos -->
+			<section class="content content--related">
+				<p class="content__info">If you enjoyed this demo you might also like:</p>
+				<a class="content__related-item" href="https://tympanus.net/Development/ElasticSVGElements/">
+					<img class="content__related-img" src="img/related/ItemRevealer.jpg">
+					<h3 class="content__related-title">Elastic SVG Elements</h3>
+				</a>
+				<a class="content__related-item" href="https://tympanus.net/Development/ItemRevealer/">
+					<img class="content__related-img" src="img/related/ElasticSVGElements.jpg">
+					<h3 class="content__related-title">Item Revealer</h3>
+				</a>
+			</section>
+		</main>
+		<script>
+			const openPopupButton = document.getElementById('openPopup');
+			const closePopupButton = document.getElementById('closePopup');
+			const popup = document.getElementById('popup');
+			const videoFrame = document.getElementById('videoFrame');
+	
+			openPopupButton.addEventListener('click', () => {
+				popup.style.display = 'block';
+				videoFrame.src = 'popup';
+			});
+	
+			closePopupButton.addEventListener('click', () => {
+				popup.style.display = 'none';
+	
+			});
+		</script>
+		<script>
+			$(".play-2").yu2fvl();
+		  </script>
+		<script src="js/imagesloaded.pkgd.min.js"></script>
+		<script src="js/anime.min.js"></script>
+		<script src="js/scrollMonitor.js"></script>
+		<script src="js/demo3.js"></script>
+		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+	</body>
+</html>
