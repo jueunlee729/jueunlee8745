@@ -1,0 +1,36 @@
+/* Navigation only. A transformed viewport canvas keeps fixed layers together. */
+.page-swipe-enabled, .page-swipe-enabled body, .page-swipe-enabled main { touch-action: pan-y pinch-zoom; }
+.page-swipe-preview-stage, .page-swipe-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+.page-swipe-preview-stage { z-index: 20000; visibility: hidden; }
+.page-swipe-preview-stage.is-visible { visibility: visible; }
+.page-swipe-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform-origin: center;
+}
+.page-swipe-preview.is-current-preview { visibility: visible; }
+.page-swipe-canvas { z-index: 20001; will-change: transform; }
+.is-page-swiping, .is-page-swiping * {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    cursor: grabbing !important;
+}
+.page-swipe-canvas main { touch-action: pan-y pinch-zoom; }
+.is-swipe-preview { overflow-x: hidden; }
+.is-swipe-preview *, .is-swipe-preview *::before, .is-swipe-preview *::after {
+    animation-play-state: paused !important;
+}
+/* Let the existing page loader finish instead of freezing its spinner. */
+.is-swipe-preview.loading::after { animation-play-state: running !important; }
