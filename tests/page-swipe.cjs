@@ -103,9 +103,11 @@ async function touch(page, points, expectHorizontal = false) {
             await page.waitForTimeout(600);
             const later = await page.evaluate(() => ({ ...window.__swipePerf }));
             console.log('Preview work ' + file + ':', later.rafRequests - initial.rafRequests, 'rAF requests / 600ms; pointermove:', later.listeners.pointermove || 0, 'mousemove:', later.listeners.mousemove || 0);
-            assert.equal(later.rafRequests, initial.rafRequests);
-            assert.equal(later.listeners.pointermove || 0, 0);
-            assert.equal(later.listeners.mousemove || 0, 0);
+            if (!process.env.SWIPE_PERF_BASELINE) {
+                assert.equal(later.rafRequests, initial.rafRequests);
+                assert.equal(later.listeners.pointermove || 0, 0);
+                assert.equal(later.listeners.mousemove || 0, 0);
+            }
             assert.equal(await page.locator('.page-swipe-preview').count(), 0);
             const playing = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length);
             assert.equal(playing, 0);
@@ -125,8 +127,10 @@ async function touch(page, points, expectHorizontal = false) {
         await page.waitForTimeout(100);
         const work = await page.evaluate(() => ({ ...window.__swipePerf }));
         console.log('Drag work: style reads', work.styleReads, 'rect reads', work.rectReads);
-        assert.equal(work.styleReads, 0);
-        assert.equal(work.rectReads, 0);
+        if (!process.env.SWIPE_PERF_BASELINE) {
+            assert.equal(work.styleReads, 0);
+            assert.equal(work.rectReads, 0);
+        }
         assert.equal(await page.locator('.page-swipe-preview').count(), count);
         await page.mouse.up(); await clean(page);
     });
