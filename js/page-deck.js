@@ -6,10 +6,15 @@ const url = new URL(location.href), pageIndex = order.indexOf(url.pathname.split
 const main = document.querySelector('main');
 if (!main || pageIndex < 0) return;
 if (url.searchParams.get('deck-preview') === '1') { document.body.classList.add('is-deck-preview'); return; }
+// Loading this script twice must never attach a second navigation gesture system.
+const initialized = Symbol.for('portfolio.pageDeck.initialized');
+if (document[initialized]) return;
+Object.defineProperty(document, initialized, { value: true });
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const excluded = 'a,button,input,textarea,select,label,iframe,video,audio,img,nav,[role="navigation"],[data-fancybox],[role="button"],[contenteditable],.content__img,.content__link,.content--layout,.demos,.codrops-links,.pater,#popup,#openPopup,#closePopup,.modal,[role="dialog"],dialog,.fancybox__container,.fancybox-container,[data-deck-ignore],.content__title,.content__subtitle,.content__desc,.codrops-header,.content__info';
 const stage = document.createElement('div'); stage.className = 'page-deck-stage'; stage.inert = true; stage.setAttribute('aria-hidden','true'); document.body.append(stage);
 const cards = new Map();
+let deckActive = false;
 let gesture = null, closing = false, frame = null, holdTimer = null, canvas = null, placeholder = null;
 let savedStyle, savedInert, savedX = 0, savedY = 0, phase = pageIndex, opening = 0, started = 0, suppressClickUntil = 0, navigating = false;
 const mod = n => ((n % 3) + 3) % 3;
@@ -75,13 +80,15 @@ const ease = t => {
     });
     document.querySelectorAll(modalSelector).forEach(trackModal);
 
-const prepare = () => order.forEach((file,i) => {
+const prepare = () => {
+ if (!deckActive) return;
+ order.forEach((file,i) => {
  if (i === pageIndex || cards.has(i)) return;
  const card = document.createElement('iframe'); card.className = 'page-deck-card'; card.title = ['Web/App','Graphic','Video'][i] + ' preview'; card.tabIndex = -1; card.inert = true;
  const target = new URL(file,url); target.searchParams.set('deck-preview','1'); card.src = target.href;
  stage.append(card); cards.set(i,card);
-});
-if (document.readyState === 'complete') prepare(); else window.addEventListener('load',prepare,{once:true});
+ });
+}; // Preview creation happens only after the hold threshold, never at page load.
 const slots = [ {x:0,y:0,s:1,o:1,r:0}, {x:.24,y:-.06,s:.86,o:.78,r:1.5}, {x:-.24,y:.06,s:.86,o:.78,r:-1.5} ];
 const pose = i => {
  const relative = mod(i-phase), k = Math.floor(relative), t = relative-k, a = slots[k], b = slots[(k+1)%3];
@@ -89,21 +96,22 @@ const pose = i => {
  p.z = p.s > .93 ? 3 : (k === 1 ? 1 : 2); return p;
 };
 const paint = (card,p,amount) => {
+ if (!deckActive && !closing) return;
  card.style.transform = 'translate3d('+p.x*innerWidth*amount+'px,'+p.y*innerHeight*amount+'px,0) rotate('+p.r*amount+'deg) scale('+(1+(.74*p.s-1)*amount)+','+(1+(.76*p.s-1)*amount)+')';
  card.style.opacity = card === canvas ? 1+(p.o-1)*amount : p.o*amount;
  card.style.zIndex = p.z; card.style.borderRadius = 12*amount+'px';
 };
 const draw = now => {
- frame = null; if (!canvas || closing) return;
+ frame = null; if (!deckActive || !canvas || closing) return;
  opening = Math.min(1,(now-started)/(reduced.matches ? 70 : 380));
  cards.forEach((card,i) => paint(card,pose(i),ease(opening)));
  if (opening < 1) frame = requestAnimationFrame(draw);
 };
-const schedule = () => { if (frame === null) frame = requestAnimationFrame(draw); };
+const schedule = () => { if (deckActive && frame === null) frame = requestAnimationFrame(draw); };
 const releaseCapture = id => { if (id !== undefined && document.documentElement.hasPointerCapture(id)) document.documentElement.releasePointerCapture(id); };
 const reset = () => {
  clearTimeout(holdTimer); holdTimer = null; if (frame !== null) cancelAnimationFrame(frame); frame = null;
- const id = gesture?.id; gesture = null; closing = false;
+ const id = gesture?.id; gesture = null; deckActive = false; closing = false;
  if (canvas) {
   placeholder.replaceWith(main); if (savedStyle === null) main.removeAttribute('style'); else main.setAttribute('style',savedStyle);
   main.inert = savedInert; canvas.remove(); canvas = placeholder = null; cards.delete(pageIndex); window.scrollTo(savedX,savedY);
@@ -112,24 +120,27 @@ const reset = () => {
 };
 const mount = () => {
  holdTimer = null; if (!gesture || modalOpen()) { reset(); return; }
+ deckActive = true; // Only this 220ms timer callback can enter deck mode.
  savedX = scrollX; savedY = scrollY; const rect = main.getBoundingClientRect(); savedStyle = main.getAttribute('style'); savedInert = main.inert;
  placeholder = document.createElement('div'); placeholder.style.height = main.offsetHeight+'px'; main.before(placeholder);
  canvas = document.createElement('div'); canvas.className = 'page-deck-card page-deck-live'; const bg = getComputedStyle(document.body);
  for (const key of ['backgroundColor','backgroundImage','backgroundSize','backgroundPosition','backgroundRepeat']) canvas.style[key] = bg[key];
  main.style.position = 'absolute'; main.style.top = rect.top+'px'; main.style.left = rect.left+'px'; main.style.width = rect.width+'px'; main.inert = true;
  canvas.append(main); stage.append(canvas); cards.set(pageIndex,canvas); prepare();
- phase = pageIndex; opening = 0; started = performance.now(); gesture.active = true;
+ phase = pageIndex; opening = 0; started = performance.now();
+ // lastX tracks pending motion, so only movement after activation rotates the deck.
  document.body.classList.add('is-page-deck'); stage.classList.add('is-visible'); document.documentElement.setPointerCapture(gesture.id);
  cards.forEach((card,i) => paint(card,pose(i),0)); schedule();
 };
 const finish = cancelled => {
- if (!canvas || closing) { if (!closing) reset(); return; }
+ if (!deckActive || !canvas || closing) { if (!closing) reset(); return; }
  if (frame !== null) cancelAnimationFrame(frame); frame = null;
  const selected = cancelled ? pageIndex : mod(Math.round(phase));
  const from = new Map(); cards.forEach((card,i) => from.set(i,pose(i)));
  const amount = ease(opening), start = performance.now(), duration = reduced.matches ? 80 : 560, id = gesture?.id;
- gesture = null; closing = true; suppressClickUntil = start+duration+400; releaseCapture(id);
+ gesture = null; deckActive = false; closing = true; suppressClickUntil = start+duration+400; releaseCapture(id);
  const tick = now => {
+  if (!closing) return;
   const t = Math.min(1,(now-start)/duration), progress = ease(t);
   cards.forEach((card,i) => {
    const p = from.get(i);
@@ -146,18 +157,23 @@ const cancel = () => { if (canvas && !closing) finish(true); else reset(); };
 window.addEventListener('pointerdown',e => {
  if (gesture || closing || e.pointerType !== 'mouse' || e.button !== 0 || e.isPrimary === false) return;
  if (document.body.classList.contains('loading') || modalOpen() || !(e.target instanceof Element) || e.target.closest(excluded)) return;
- gesture = {id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,active:false}; holdTimer = setTimeout(mount,220);
+ gesture = {id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX}; holdTimer = setTimeout(mount,220);
 },{capture:true,passive:true});
 window.addEventListener('pointermove',e => {
  if (closing) { e.stopImmediatePropagation(); return; }
  if (!gesture || e.pointerId !== gesture.id) return;
- if (!gesture.active) { if (Math.hypot(e.clientX-gesture.x,e.clientY-gesture.y)>8) reset(); return; }
+ if (!deckActive) {
+  // Before activation, movement can only cancel the hold; it cannot draw or navigate.
+  if (Math.hypot(e.clientX-gesture.x,e.clientY-gesture.y)>8) reset();
+  else gesture.lastX = e.clientX;
+  return;
+ }
  e.preventDefault(); e.stopImmediatePropagation(); phase -= (e.clientX-gesture.lastX)/180; gesture.lastX = e.clientX; schedule();
 },{capture:true,passive:false});
 window.addEventListener('mousemove',e => { if (canvas) e.stopImmediatePropagation(); },true);
 window.addEventListener('pointerup',e => {
  if (!gesture || e.pointerId !== gesture.id) return;
- if (!gesture.active) { reset(); return; }
+ if (!deckActive) { reset(); return; }
  phase -= (e.clientX-gesture.lastX)/180; e.preventDefault(); e.stopImmediatePropagation(); finish(false);
 },{capture:true,passive:false});
 window.addEventListener('wheel',e => { if (canvas) { e.preventDefault(); e.stopImmediatePropagation(); } else if (gesture) reset(); },{capture:true,passive:false});
@@ -167,7 +183,7 @@ window.addEventListener('keydown',e => {
  else if (canvas && ['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key)) e.preventDefault();
 },true);
 window.addEventListener('pointercancel',cancel,true);
-document.documentElement.addEventListener('lostpointercapture',e => { if (gesture?.active && e.target===document.documentElement) cancel(); });
+document.documentElement.addEventListener('lostpointercapture',e => { if (deckActive && gesture && e.target===document.documentElement) cancel(); });
 window.addEventListener('resize',reset); window.addEventListener('blur',() => { if (!navigating) cancel(); });
 document.addEventListener('visibilitychange',() => { if (document.hidden && !navigating) reset(); });
 window.addEventListener('pagehide',reset);

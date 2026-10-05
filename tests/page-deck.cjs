@@ -29,23 +29,21 @@ async function ready(page, file = 'index.html') {
     await page.waitForFunction(() => !document.body.classList.contains('loading'));
     await page.waitForTimeout(80);
 }
-async function emptyPoint(page) {
-    return page.evaluate(() => {
+async function emptyPoint(page, direction = -1) {
+    return page.evaluate(direction => {
         const excluded = 'a,button,input,textarea,select,label,iframe,video,audio,img,[data-fancybox],[role="button"],[contenteditable],.content--layout,.demos,.codrops-links,.pater,#popup,.content__title,.content__desc,.codrops-header';
-        for (const x of [innerWidth - 18, 18, innerWidth - 50, 50]) {
+        const positions = direction > 0 ? [18, 50, innerWidth - 18, innerWidth - 50] : [innerWidth - 18, innerWidth - 50, 18, 50];
+        for (const x of positions) {
             for (const y of [innerHeight * .18, innerHeight * .48, innerHeight * .68, innerHeight * .85, innerHeight * .92]) {
                 const el = document.elementFromPoint(x, y);
                 if (el && !el.closest(excluded)) return { x, y };
             }
         }
         throw new Error('No empty background point found');
-    });
+    }, direction);
 }
 async function drag(page, delta, options = {}) {
-    const point = await emptyPoint(page);
-    // Pick the edge that leaves enough room in the intended direction.
-    if (delta > 0 && point.x > 400) point.x = 18;
-    if (delta < 0 && point.x < 400) point.x = (await page.evaluate(() => innerWidth)) - 18;
+    const point = await emptyPoint(page, Math.sign(delta));
     await page.mouse.move(point.x, point.y);
     await page.mouse.down();
     await page.waitForTimeout(650);
@@ -74,7 +72,62 @@ async function touch(page, points, expectHorizontal = false) {
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve)); base='http://127.0.0.1:'+server.address().port+'/';
  browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
  const context=await browser.newContext({viewport:{width:1280,height:800},ignoreHTTPSErrors:true});
+ await context.addInitScript(() => {
+  window.__deckListeners = {};
+  const add = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function(type, ...args) {
+   if (/\/js\/page-deck\.js\b/.test(new Error().stack)) {
+    window.__deckListeners[type] = (window.__deckListeners[type] || 0) + 1;
+   }
+   return add.call(this, type, ...args);
+  };
+ });
  const page=await context.newPage(); page.setDefaultTimeout(20000);
+ await check('all three pages: left/right and pre-threshold drags cannot transform, preview or navigate',async()=>{
+  for (const file of ['index.html','index2.html','index3.html']) {
+   for (const sign of [-1,1]) {
+    await ready(page,file);
+    const before = await page.evaluate(() => {
+     const main=document.querySelector('main'), rect=main.getBoundingClientRect();
+     window.__normalFrames=[];
+     window.__watchNormal=true;
+     const monitor=()=>{
+      if (!window.__watchNormal) return;
+      window.__normalFrames.push({transform:getComputedStyle(main).transform, live:!!document.querySelector('.page-deck-live'), visible:!!document.querySelector('.page-deck-stage.is-visible')});
+      requestAnimationFrame(monitor);
+     }; requestAnimationFrame(monitor);
+     return {style:main.getAttribute('style'),x:rect.x,y:rect.y};
+    });
+    const p=await emptyPoint(page,sign);
+    await page.mouse.move(p.x,p.y); await page.mouse.down();
+    await page.waitForTimeout(100);
+    const delta=sign*180;
+    await page.mouse.move(p.x+delta,p.y);
+    await page.waitForTimeout(350); await page.mouse.up();
+    const after=await page.evaluate(()=>{
+     window.__watchNormal=false;
+     const main=document.querySelector('main'),rect=main.getBoundingClientRect();
+     return {style:main.getAttribute('style'),x:rect.x,y:rect.y,frames:window.__normalFrames, previews:document.querySelectorAll('.page-deck-card').length};
+    });
+    assert.deepEqual({style:after.style,x:after.x,y:after.y},before);
+    assert(after.frames.length>0); assert(after.frames.every(f=>f.transform==='none' && !f.live && !f.visible));
+    assert.equal(after.previews,0); assert.equal(new URL(page.url()).pathname,'/'+file);
+   }
+  }
+ });
+ await check('only one gesture initializes per page even when script is loaded again',async()=>{
+  for(const file of ['index.html','index2.html','index3.html']) {
+   await ready(page,file);
+   const before=await page.evaluate(()=>({listeners:window.__deckListeners,scripts:[...document.scripts].map(s=>s.src),styles:[...document.querySelectorAll('link[rel="stylesheet"]')].map(s=>s.href)}));
+   assert.equal(before.listeners.pointerdown,1); assert.equal(before.listeners.pointermove,1); assert.equal(before.listeners.pointerup,1);
+   assert.equal(before.scripts.filter(s=>s.includes('/js/page-deck.js')).length,1);
+   assert(![...before.scripts,...before.styles].some(s=>s.includes('page-swipe')));
+   assert.equal(await page.locator('.page-deck-card').count(),0);
+   await page.addScriptTag({url:base+'js/page-deck.js?v=duplicate-check'});
+   assert.deepEqual(await page.evaluate(()=>window.__deckListeners),before.listeners);
+   assert.equal(await page.locator('.page-deck-stage').count(),1);
+  }
+ });
  await check('normal wheel and quick clicks never open deck',async()=>{
   await ready(page); const p=await emptyPoint(page); await page.mouse.click(p.x,p.y); await page.waitForTimeout(300); assert.equal(await page.locator('.page-deck-live').count(),0);
   await page.mouse.wheel(0,500); await page.waitForTimeout(300); assert((await page.evaluate(()=>scrollY))>100);
