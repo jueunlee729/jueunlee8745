@@ -125,7 +125,7 @@
 	const init = function() {
 		imagesLoaded(document.body, () => {
 			// Preview documents keep their cards static and install no hover handlers.
-			if (new URLSearchParams(location.search).get('swipe-preview') !== '1') {
+			if (new URLSearchParams(location.search).get('deck-preview') !== '1') {
 				Array.from(document.querySelectorAll('.content--layout')).forEach(el => new TiltObj(el));
 			}
 			// Remove loading class from body

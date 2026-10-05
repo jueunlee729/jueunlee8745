@@ -1,0 +1,9 @@
+/* No normal-page layout or touch-action overrides. */
+.page-deck-stage { position:fixed; inset:0; z-index:20000; overflow:hidden; visibility:hidden; pointer-events:none; isolation:isolate; }
+.page-deck-stage.is-visible { visibility:visible; }
+.page-deck-card { position:absolute; inset:0; width:100%; height:100%; border:0; overflow:hidden; pointer-events:none; transform-origin:center; }
+.is-visible .page-deck-card { will-change:transform,opacity; box-shadow:0 18px 70px rgba(0,0,0,.24); }
+.is-page-deck, .is-page-deck * { cursor:grabbing !important; user-select:none !important; -webkit-user-select:none !important; }
+.is-deck-preview { pointer-events:none; }
+.is-deck-preview *, .is-deck-preview *::before, .is-deck-preview *::after { animation-play-state:paused !important; }
+.is-deck-preview.loading::after { animation-play-state:running !important; }

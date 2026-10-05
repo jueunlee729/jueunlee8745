@@ -68,7 +68,7 @@
     };
     sizePlants();
     // Static preview: retain plant/mist shapes but create no wind listeners or rAF loop.
-    if (new URLSearchParams(location.search).get('swipe-preview') === '1') return;
+    if (new URLSearchParams(location.search).get('deck-preview') === '1') return;
     let previousMouseX = null, previousMouseTime = 0;
     let previousScrollY = scrollY, previousScrollTime = performance.now();
     let frame = null, lastFrame = 0;
