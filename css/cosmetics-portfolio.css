@@ -55,6 +55,7 @@
     font-family: inherit;
     font-size: clamp(2rem, 7vw, 6rem);
     font-weight: 700;
-    color: #000;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.28);
     pointer-events: none;
 }
