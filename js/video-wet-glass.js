@@ -83,7 +83,7 @@
         s.trail.style.setProperty('--dry-front', (12 + fade * 76) + '%');
     });
     // Draw one recognizable moisture state; previews never start the droplet loop.
-    if (new URLSearchParams(location.search).get('swipe-preview') === '1') {
+    if (new URLSearchParams(location.search).get('deck-preview') === '1') {
         draw();
         return;
     }
