@@ -1,0 +1,34 @@
+/* Scoped to the cosmetics inline slide; the main portfolio grid is unchanged. */
+.portfolio-scroll {
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    background: #fff;
+}
+
+.portfolio-scroll img {
+    display: block;
+    width: min(100%, 1200px);
+    max-height: none;
+    height: auto;
+    margin: 0 auto;
+}
+
+.fancybox__slide.has-inline:has(> .portfolio-scroll) {
+    padding: 0;
+}
+
+.portfolio-scroll > .carousel__button.is-close {
+    top: 12px;
+    right: 12px;
+    position: sticky;
+    float: right;
+    margin-bottom: -40px;
+}
