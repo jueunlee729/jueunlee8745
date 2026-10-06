@@ -162,7 +162,7 @@ async function touch(page, points, expectHorizontal = false) {
  });
  await check('project hold never activates; navigation links still work',async()=>{
   await ready(page); const box=await page.locator('a[data-fancybox] img').first().boundingBox(); await page.mouse.move(box.x+20,box.y+20); await page.mouse.down(); await page.waitForTimeout(600); assert.equal(await page.locator('.page-deck-live').count(),0); await page.keyboard.press('Escape'); await page.mouse.move(1260,400); await page.mouse.up();
-  await ready(page); await page.locator('.codrops-icon--next').click(); await page.waitForURL(base+'index3.html');
+  await ready(page); await page.locator('.demos a[href="index3.html"]').click(); await page.waitForURL(base+'index3.html');
  });
  await check('popup and Fancybox API block activation',async()=>{
   await ready(page,'index3.html'); await page.evaluate(()=>document.querySelector('#popup').style.display='block'); await drag(page,-180); assert.equal(await page.locator('.page-deck-live').count(),0);
@@ -184,7 +184,71 @@ async function touch(page, points, expectHorizontal = false) {
   assert.equal(await page.locator('.video-wet-glass .glass-drop').count(),8);
  });
  await check('reduced motion navigation works',async()=>{await page.emulateMedia({reducedMotion:'reduce'}); await ready(page); await drag(page,-180); await page.waitForURL(base+'index3.html');});
- const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true}); const phone=await mobile.newPage();
+ const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,ignoreHTTPSErrors:true}); const phone=await mobile.newPage();
  await check('native touch vertical scroll remains available',async()=>{await ready(phone); await touch(phone,[{x:372,y:620},{x:369,y:560},{x:366,y:480},{x:357,y:370}]); assert((await phone.evaluate(()=>scrollY))>100); assert.equal(await phone.locator('.page-deck-live').count(),0);});
+
+ async function finger(type, points = []) {
+  await session.send('Input.dispatchTouchEvent',{type,touchPoints:points.map((p,i)=>({...p,id:i}))});
+ }
+ const session=await mobile.newCDPSession(phone);
+ await check('touch taps, short holds, horizontal swipes and slow scroll never activate',async()=>{
+  for(const kind of ['tap','short','horizontal','slow']) {
+   await ready(phone); const p=await emptyPoint(phone);
+   await finger('touchStart',[p]);
+   if(kind==='short') await phone.waitForTimeout(250);
+   if(kind==='horizontal') await finger('touchMove',[{x:p.x-80,y:p.y}]);
+   if(kind==='slow') { await phone.waitForTimeout(80); await finger('touchMove',[{x:p.x,y:p.y+18}]); }
+   if(kind==='horizontal'||kind==='slow') await phone.waitForTimeout(450);
+   assert.equal(await phone.locator('.page-deck-live').count(),0);
+   await finger('touchEnd'); assert.equal(new URL(phone.url()).pathname,'/index.html');
+  }
+ });
+ await check('touch hold waits 380ms, uses mobile geometry, restores without reload and unlocks scroll',async()=>{
+  await ready(phone); await phone.evaluate(()=>window.__sameMain=document.querySelector('main'));
+  const p=await emptyPoint(phone); await finger('touchStart',[p]); await phone.waitForTimeout(300);
+  assert.equal(await phone.locator('.page-deck-live').count(),0);
+  await phone.waitForTimeout(550); assert.equal(await phone.locator('.page-deck-card').count(),3);
+  const values=await phone.locator('.page-deck-live').evaluate(el=>({matrix:[...new DOMMatrix(getComputedStyle(el).transform).toFloat64Array()],overflow:document.body.style.overflow}));
+  assert(Math.abs(values.matrix[0]-.86)<.001); assert(Math.abs(values.matrix[5]-.72)<.001); assert.equal(values.overflow,'hidden');
+  const y=await phone.evaluate(()=>scrollY);
+  await finger('touchMove',[{x:p.x,y:p.y+60}]); await phone.waitForTimeout(100);
+  assert.equal(await phone.evaluate(()=>scrollY),y); assert.equal(await phone.locator('.page-deck-live').count(),1);
+  await finger('touchEnd'); assert.equal(await phone.evaluate(()=>document.body.style.overflow),''); await clean(phone);
+  assert(await phone.evaluate(()=>document.querySelector('main')===window.__sameMain));
+  await touch(phone,[{x:372,y:620},{x:372,y:540},{x:372,y:380}]); assert((await phone.evaluate(()=>scrollY))>50);
+ });
+ await check('touch hold and 140px drag navigates through the existing circular deck',async()=>{
+  for(const file of ['index2.html','index.html','index3.html']) {
+   await ready(phone,file); const p=await emptyPoint(phone); await finger('touchStart',[p]); await phone.waitForTimeout(850);
+   await finger('touchMove',[{x:p.x-140,y:p.y}]); await phone.waitForTimeout(100); assert.equal(await phone.locator('.page-deck-live').count(),1);
+   await finger('touchEnd'); const order=['index2.html','index.html','index3.html']; await phone.waitForURL(base+order[(order.indexOf(file)+1)%3]);
+  }
+ });
+ await check('touch multitouch, cancel, visibility, resize and modal opening restore safely',async()=>{
+  for(const reason of ['second-pending','second-active','cancel','visibility','resize','modal']) {
+   await ready(phone,'index3.html'); const p=await emptyPoint(phone); await finger('touchStart',[p]);
+   await phone.waitForTimeout(reason==='second-pending'?100:850);
+   if(reason.startsWith('second')) await finger('touchStart',[p,{x:p.x-35,y:p.y+35}]);
+   if(reason==='cancel') await finger('touchCancel');
+   if(reason==='visibility') await phone.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));});
+   if(reason==='resize') await phone.setViewportSize({width:400,height:844});
+   if(reason==='modal') await phone.evaluate(()=>document.querySelector('#popup').style.display='block');
+   await clean(phone); assert.equal(await phone.evaluate(()=>document.body.style.overflow),''); if(reason!=='cancel') await finger('touchEnd');
+   assert.equal(new URL(phone.url()).pathname,'/index3.html'); await phone.setViewportSize({width:390,height:844});
+  }
+ });
+ await check('touch project and Discover native taps remain available; Fancybox API blocks holds',async()=>{
+  await ready(phone); await phone.locator('a[data-fancybox]').first().tap({position:{x:10,y:10}}); await phone.waitForTimeout(300);
+  assert(await phone.evaluate(()=>!!document.querySelector('.fancybox-container,.fancybox__container') || location.pathname.endsWith('/img/introduce1.jpg')));
+  await phone.keyboard.press('Escape'); await ready(phone);
+  const box=await phone.locator('a[data-fancybox] img').first().boundingBox();
+  await finger('touchStart',[{x:box.x+10,y:box.y+10}]); await phone.waitForTimeout(500); assert.equal(await phone.locator('.page-deck-live').count(),0); await finger('touchCancel');
+  await phone.locator('.content__link').first().tap();
+  await phone.waitForFunction(()=>location.pathname.endsWith('/img/introduce1.jpg') || !!document.querySelector('.fancybox-container,.fancybox__container'));
+  assert.equal(await phone.locator('.page-deck-live').count(),0);
+  await ready(phone); await phone.evaluate(()=>window.Fancybox={getInstance:()=>({})});
+  const p=await emptyPoint(phone); await finger('touchStart',[p]); await phone.waitForTimeout(500); assert.equal(await phone.locator('.page-deck-live').count(),0); await finger('touchEnd');
+ });
+ await session.detach();
  await mobile.close(); await context.close(); if(failures.length) throw Error(failures.join('\n'));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{if(browser) await browser.close();server.close();});
