@@ -19,7 +19,7 @@
     const excluded = [
         'a', 'button', 'input', 'textarea', 'select', 'label', 'iframe', 'video', 'audio',
         'img', '[data-fancybox]', '[role="button"]', '[contenteditable]',
-        '.content__img', '.content__link', '.content--layout', '.demos', '.codrops-links', '.pater',
+        '.content__img', '.content__link', '.content--layout', '.demos', '.pater',
         '#popup', '#openPopup', '#closePopup', '.modal', '[role="dialog"]', 'dialog',
         '.fancybox__container', '.fancybox-container', '[data-swipe-ignore]',
         '.content__title', '.content__subtitle', '.content__desc', '.codrops-header', '.content__info'

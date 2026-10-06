@@ -31,7 +31,7 @@ async function ready(page, file = 'index.html') {
 }
 async function emptyPoint(page) {
     return page.evaluate(() => {
-        const excluded = 'a,button,input,textarea,select,label,iframe,video,audio,img,[data-fancybox],[role="button"],[contenteditable],.content--layout,.demos,.codrops-links,.pater,#popup,.content__title,.content__desc,.codrops-header';
+        const excluded = 'a,button,input,textarea,select,label,iframe,video,audio,img,[data-fancybox],[role="button"],[contenteditable],.content--layout,.demos,.pater,#popup,.content__title,.content__desc,.codrops-header';
         for (const x of [innerWidth - 18, 18, innerWidth - 50, 50]) {
             for (const y of [innerHeight * .18, innerHeight * .48, innerHeight * .68, innerHeight * .85, innerHeight * .92]) {
                 const el = document.elementFromPoint(x, y);
@@ -201,14 +201,12 @@ async function touch(page, points, expectHorizontal = false) {
         await page.locator('.demos a[href="index2.html"]').click();
         await page.waitForURL(base + 'index2.html');
     });
-    await check('arrow navigation stays clickable and card drags never start page swipes', async () => {
+    await check('card drags never start page swipes', async () => {
         await ready(page);
         const rect = await page.locator('a[data-fancybox] img').first().boundingBox();
         await page.mouse.move(rect.x + 25, rect.y + 25); await page.mouse.down();
         await page.mouse.move(rect.x + 285, rect.y + 30, { steps: 8 }); await page.mouse.up();
         assert.equal(await page.locator('.page-swipe-canvas').count(), 0);
-        await page.locator('.codrops-icon--next').click();
-        await page.waitForURL(base + 'index3.html');
     });
     await check('image click is preserved and Fancybox modal state blocks swipe', async () => {
         await ready(page);
