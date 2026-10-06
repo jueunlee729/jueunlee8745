@@ -1,8 +1,7 @@
-// Only the cosmetics inline content needs gesture arbitration. Fancybox keeps
+// Scrollable inline portfolios share gesture arbitration. Fancybox keeps
 // its existing groups, buttons and image-slide gestures; page-deck is untouched.
 (() => {
-    const wrapper = document.getElementById('cosmetics-portfolio');
-    if (!wrapper) return;
+    document.querySelectorAll('.portfolio-scroll').forEach(wrapper => {
     let gesture = null;
     let suppressClickUntil = 0;
 
@@ -58,4 +57,17 @@
             event.stopImmediatePropagation();
         }
     }, true);
+    for (const video of wrapper.querySelectorAll('video')) {
+        video.muted = true;
+        video.pause();
+        const observer = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+                if (entry.isIntersecting && window.Fancybox?.getInstance()?.getSlide()?.$content === wrapper) {
+                    video.play().catch(() => {});
+                } else video.pause();
+            }
+        }, { threshold: 0.1 });
+        observer.observe(video);
+    }
+    });
 })();
