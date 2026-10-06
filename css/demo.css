@@ -18,20 +18,21 @@
 }
 
 body {
-	--text-color: #fff;
-    --background-color: #363dc2;
-    --background-color-2: #363dc2;
-    --background-color-3: #342560;
+    --text-color: #fff;
+    --background-color: #2B313A;
+    --background-color-2: #2B313A;
+    --background-color-3: #1F252C;
     --link-color: #f9ed8a;
     --link-hover-color: #ffffff;
-	font-family: 'Roboto Mono', monospace;
-	font-weight: 500;
-	color: #fff;
-	color: var(--text-color);
-	background-color: #363dc2;
-	background-color: var(--background-color);
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+    color: var(--text-color);
+    background-color: #2B313A;
+    background-color: var(--background-color);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* --text-color: #fff;
