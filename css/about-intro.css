@@ -1,0 +1,93 @@
+.about-intro {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    padding: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    background: #393939;
+}
+.about-intro__background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('../img/이주은 포트폴리오/자기소개서 배경.png') center / cover no-repeat;
+    pointer-events: none;
+}
+.about-intro__stage {
+    position: relative;
+    width: min(100%, 1600px);
+    min-height: 100%;
+    margin: auto;
+    display: grid;
+    place-items: center;
+    padding: 110px 24px 36px;
+    box-sizing: border-box;
+}
+.about-intro__title {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    color: #e9e9df;
+    font-family: 'Noto Sans KR', Arial, sans-serif;
+    font-size: clamp(28px, 4.4vw, 70px);
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.2;
+    pointer-events: none;
+}
+.about-intro__center {
+    z-index: 1;
+    width: min(54vw, 680px, calc((100dvh - 160px) * 680 / 660));
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.about-intro__center img { display: block; width: 100%; height: auto; }
+.about-intro__center:focus-visible { outline: 3px solid #e9e9df; outline-offset: 8px; }
+.about-intro.is-open .about-intro__center { transform: scale(.7); }
+.about-intro__cards { position: absolute; inset: 120px 4% 30px; pointer-events: none; }
+.about-intro__card-list { display: contents; }
+.about-intro__card {
+    position: absolute;
+    display: block;
+    width: min(25%, 340px, calc((100dvh - 180px) * .44));
+    height: auto;
+    opacity: 0;
+    transform: translateY(24px) scale(.96);
+    pointer-events: none;
+    transition: opacity 550ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.about-intro__card--information { top: 0; left: 0; }
+.about-intro__card--education { bottom: 0; left: 0; }
+.about-intro__card--experience { top: 0; right: 0; }
+.about-intro__card--certification { bottom: 0; right: 0; }
+.about-intro.is-open .about-intro__card { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.about-intro.is-open .about-intro__card--education { transition-delay: 70ms; }
+.about-intro.is-open .about-intro__card--experience { transition-delay: 140ms; }
+.about-intro.is-open .about-intro__card--certification { transition-delay: 210ms; }
+.fancybox__slide.has-inline:has(> .about-intro) { padding: 0; }
+.about-intro > .carousel__button.is-close { position: fixed; top: 12px; right: 12px; z-index: 3; }
+@media (max-width: 700px) {
+    .about-intro__background { position: fixed; }
+    .about-intro__stage { display: flex; flex-direction: column; justify-content: flex-start; padding: 100px 24px 40px; }
+    .about-intro__title { top: 40px; }
+    .about-intro__center { flex: none; width: min(100%, 440px); }
+    .about-intro.is-open .about-intro__center { transform: scale(.88); }
+    .about-intro__cards { position: static; display: grid; grid-template-rows: 0fr; width: min(100%, 454px); transition: grid-template-rows 700ms cubic-bezier(0.22, 1, 0.36, 1); }
+    .about-intro__card-list { display: flex; flex-direction: column; gap: 20px; min-height: 0; overflow: hidden; }
+    .about-intro__card { position: static; flex: none; width: 100%; margin: 0; }
+    .about-intro.is-open .about-intro__cards { grid-template-rows: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .about-intro__center, .about-intro__card, .about-intro__cards { transition-duration: 1ms; transition-delay: 0ms !important; }
+}

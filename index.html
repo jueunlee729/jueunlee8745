@@ -45,6 +45,8 @@
 		if (!supportsCssVars()) alert('Please view this demo in a modern browser that supports CSS Variables.')
 	</script>
 	<link rel="stylesheet" type="text/css" href="css/cosmetics-portfolio.css" />
+	<link rel="stylesheet" href="css/about-intro.css" />
+	<script src="js/about-intro.js" defer></script>
 	<link rel="stylesheet" type="text/css" href="css/page-deck.css?v=touch-hold-3" />
 	<script src="js/page-deck.js?v=touch-hold-3" defer></script>
 </head>
@@ -95,7 +97,7 @@
 		</div>
 		<div class="content-wrap">
 			<div class="content content--layout content--layout-1">
-				<a href="img/introduce1.jpg" class="content__img" data-fancybox="gallery-a">
+				<a href="img/introduce1.jpg" data-src="#about-intro" data-type="inline" class="content__img" data-fancybox="gallery-a">
 					<img class="content__img" src="img/이주은 포트폴리오/자기소개썸네일.png" alt="Some image" />
 				</a>
 				<h3 class="content__title">JUEUN.LEE</h3>
@@ -104,7 +106,7 @@
 					삶은 과정의 연속이다 <br> 한 걸음씩 나아가는 디자이너
 					<br>vvoovv8745@gmail.com
 				</p>
-				<a href="img/introduce1.jpg" class="content__link" data-fancybox="gallery-d">Discover</a>
+				<a href="img/introduce1.jpg" data-src="#about-intro" data-type="inline" class="content__link" data-fancybox="gallery-d">Discover</a>
 				
 			</div>
 		</div>
@@ -266,6 +268,23 @@
 
 		});
 	</script>
+	<section id="about-intro" class="about-intro" style="display: none;" aria-labelledby="about-intro-title" data-deck-ignore data-swipe-ignore>
+		<div class="about-intro__background" aria-hidden="true"></div>
+		<div class="about-intro__stage">
+			<h2 id="about-intro-title" class="about-intro__title">INTRODUCTION</h2>
+			<button class="about-intro__center" type="button" aria-expanded="false" aria-controls="about-intro-cards" aria-label="자기소개 정보 펼치기">
+				<img src="img/이주은 포트폴리오/자기소개서 누르기 이미지.png" alt="이주은 자기소개 콜라주" width="680" height="660" draggable="false" />
+			</button>
+			<div id="about-intro-cards" class="about-intro__cards" aria-hidden="true" inert>
+				<div class="about-intro__card-list">
+				<img class="about-intro__card about-intro__card--information" src="img/이주은 포트폴리오/네모박스-1.png" alt="INFORMATION: 이주은 JUEUN LEE, 1995.12.23, 010-3450-4264, vvoovv8745@gmail.com" width="454" height="445" draggable="false" />
+				<img class="about-intro__card about-intro__card--education" src="img/이주은 포트폴리오/네모박스-2.png" alt="EDUCATION: 2026.04~10 센텀직업전문학교 영상편집 및 광고콘텐츠반 수료, 2026.02 동서대학교 호텔경영학과 졸업, 2014.02 정보과학고등학교 졸업" width="454" height="445" draggable="false" />
+				<img class="about-intro__card about-intro__card--experience" src="img/이주은 포트폴리오/네모박스-3.png" alt="EXPERIENCE: 2025.06~11 부산 기장 아난티 호텔 고객응대 및 프런트 업무" width="454" height="445" draggable="false" />
+				<img class="about-intro__card about-intro__card--certification" src="img/이주은 포트폴리오/네모박스-4.png" alt="CERTIFICATION: 2025.11 GTQ 일러스트 2급, 2023.02 컴퓨터활용능력 2급" width="454" height="445" draggable="false" />
+				</div>
+			</div>
+		</div>
+	</section>
 	<div id="cosmetics-portfolio" class="portfolio-scroll" style="display: none;" tabindex="0" role="region" aria-label="1025 독도 토너 리디자인 포트폴리오">
 		<img src="img/이주은 화장품/포트폴리오-완성본.png" alt="1025 독도 토너 리디자인 포트폴리오" loading="lazy" draggable="false" />
 	</div>
