@@ -1,4 +1,4 @@
-// Mouse-only temporary deck; normal page layout and touch scrolling are untouched.
+// Separate intentional touch holds share the existing mouse deck renderer.
 (() => {
 'use strict';
 const order = ['index2.html','index.html','index3.html'];
@@ -15,6 +15,15 @@ const excluded = 'a,button,input,textarea,select,label,iframe,video,audio,img,na
 const stage = document.createElement('div'); stage.className = 'page-deck-stage'; stage.inert = true; stage.setAttribute('aria-hidden','true'); document.body.append(stage);
 const cards = new Map();
 let deckActive = false;
+let touchState = 'idle', touchDeck = false, scrollLock = null;
+const touches = new Set();
+const unlockTouchScroll = () => {
+ if (!scrollLock) return;
+ for (const [el,value,priority] of scrollLock) {
+  if (value) el.style.setProperty('overflow',value,priority); else el.style.removeProperty('overflow');
+ }
+ scrollLock = null;
+};
 let gesture = null, closing = false, frame = null, holdTimer = null, canvas = null, placeholder = null;
 let savedStyle, savedInert, savedX = 0, savedY = 0, phase = pageIndex, opening = 0, started = 0, suppressClickUntil = 0, navigating = false;
 const mod = n => ((n % 3) + 3) % 3;
@@ -93,11 +102,13 @@ const slots = [ {x:0,y:0,s:1,o:1,r:0}, {x:.24,y:-.06,s:.86,o:.78,r:1.5}, {x:-.24
 const pose = i => {
  const relative = mod(i-phase), k = Math.floor(relative), t = relative-k, a = slots[k], b = slots[(k+1)%3];
  const p = {}; for (const key in a) p[key] = a[key]+(b[key]-a[key])*t;
+ if (touchDeck) { p.x *= .65; p.y *= .8; p.s = 1-(1-p.s)*1.2; }
  p.z = p.s > .93 ? 3 : (k === 1 ? 1 : 2); return p;
 };
 const paint = (card,p,amount) => {
  if (!deckActive && !closing) return;
- card.style.transform = 'translate3d('+p.x*innerWidth*amount+'px,'+p.y*innerHeight*amount+'px,0) rotate('+p.r*amount+'deg) scale('+(1+(.74*p.s-1)*amount)+','+(1+(.76*p.s-1)*amount)+')';
+ const width = touchDeck ? .86 : .74, height = touchDeck ? .72 : .76;
+ card.style.transform = 'translate3d('+p.x*innerWidth*amount+'px,'+p.y*innerHeight*amount+'px,0) rotate('+p.r*amount+'deg) scale('+(1+(width*p.s-1)*amount)+','+(1+(height*p.s-1)*amount)+')';
  card.style.opacity = card === canvas ? 1+(p.o-1)*amount : p.o*amount;
  card.style.zIndex = p.z; card.style.borderRadius = 12*amount+'px';
 };
@@ -112,6 +123,7 @@ const releaseCapture = id => { if (id !== undefined && document.documentElement.
 const reset = () => {
  clearTimeout(holdTimer); holdTimer = null; if (frame !== null) cancelAnimationFrame(frame); frame = null;
  const id = gesture?.id; gesture = null; deckActive = false; closing = false;
+ touchState = 'idle'; unlockTouchScroll(); touchDeck = false;
  if (canvas) {
   placeholder.replaceWith(main); if (savedStyle === null) main.removeAttribute('style'); else main.setAttribute('style',savedStyle);
   main.inert = savedInert; canvas.remove(); canvas = placeholder = null; cards.delete(pageIndex); window.scrollTo(savedX,savedY);
@@ -120,7 +132,13 @@ const reset = () => {
 };
 const mount = () => {
  holdTimer = null; if (!gesture || modalOpen()) { reset(); return; }
- deckActive = true; // Only this 220ms timer callback can enter deck mode.
+ deckActive = true; // Only the mouse 220ms / touch 380ms hold enters deck mode.
+ touchDeck = gesture.type === 'touch';
+ if (touchDeck) {
+  touchState = 'deck-active';
+  scrollLock = [document.documentElement,document.body].map(el => [el,el.style.getPropertyValue('overflow'),el.style.getPropertyPriority('overflow')]);
+  for (const [el] of scrollLock) el.style.setProperty('overflow','hidden');
+ }
  savedX = scrollX; savedY = scrollY; const rect = main.getBoundingClientRect(); savedStyle = main.getAttribute('style'); savedInert = main.inert;
  placeholder = document.createElement('div'); placeholder.style.height = main.offsetHeight+'px'; main.before(placeholder);
  canvas = document.createElement('div'); canvas.className = 'page-deck-card page-deck-live'; const bg = getComputedStyle(document.body);
@@ -138,6 +156,7 @@ const finish = cancelled => {
  const selected = cancelled ? pageIndex : mod(Math.round(phase));
  const from = new Map(); cards.forEach((card,i) => from.set(i,pose(i)));
  const amount = ease(opening), start = performance.now(), duration = reduced.matches ? 80 : 560, id = gesture?.id;
+ if (touchDeck) { touchState = 'closing'; unlockTouchScroll(); }
  gesture = null; deckActive = false; closing = true; suppressClickUntil = start+duration+400; releaseCapture(id);
  const tick = now => {
   if (!closing) return;
@@ -155,6 +174,15 @@ const finish = cancelled => {
 };
 const cancel = () => { if (canvas && !closing) finish(true); else reset(); };
 window.addEventListener('pointerdown',e => {
+ if (e.pointerType === 'touch') {
+  touches.add(e.pointerId);
+  if (touches.size > 1) { if (gesture?.type === 'touch' || touchDeck) cancel(); return; }
+  if (gesture || closing || e.isPrimary === false) return;
+  if (document.body.classList.contains('loading') || modalOpen() || !(e.target instanceof Element) || e.target.closest(excluded)) return;
+  touchState = 'holding';
+  gesture = {id:e.pointerId,type:'touch',x:e.clientX,y:e.clientY,lastX:e.clientX};
+  holdTimer = setTimeout(mount,380); return;
+ }
  if (gesture || closing || e.pointerType !== 'mouse' || e.button !== 0 || e.isPrimary === false) return;
  if (document.body.classList.contains('loading') || modalOpen() || !(e.target instanceof Element) || e.target.closest(excluded)) return;
  gesture = {id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX}; holdTimer = setTimeout(mount,220);
@@ -164,17 +192,18 @@ window.addEventListener('pointermove',e => {
  if (!gesture || e.pointerId !== gesture.id) return;
  if (!deckActive) {
   // Before activation, movement can only cancel the hold; it cannot draw or navigate.
-  if (Math.hypot(e.clientX-gesture.x,e.clientY-gesture.y)>8) reset();
+  if (Math.hypot(e.clientX-gesture.x,e.clientY-gesture.y)>(gesture.type === 'touch' ? 12 : 8)) reset();
   else gesture.lastX = e.clientX;
   return;
  }
- e.preventDefault(); e.stopImmediatePropagation(); phase -= (e.clientX-gesture.lastX)/180; gesture.lastX = e.clientX; schedule();
+ e.preventDefault(); e.stopImmediatePropagation(); phase -= (e.clientX-gesture.lastX)/(gesture.type === 'touch' ? 140 : 180); gesture.lastX = e.clientX; schedule();
 },{capture:true,passive:false});
 window.addEventListener('mousemove',e => { if (canvas) e.stopImmediatePropagation(); },true);
 window.addEventListener('pointerup',e => {
+ if (e.pointerType === 'touch') touches.delete(e.pointerId);
  if (!gesture || e.pointerId !== gesture.id) return;
  if (!deckActive) { reset(); return; }
- phase -= (e.clientX-gesture.lastX)/180; e.preventDefault(); e.stopImmediatePropagation(); finish(false);
+ phase -= (e.clientX-gesture.lastX)/(gesture.type === 'touch' ? 140 : 180); e.preventDefault(); e.stopImmediatePropagation(); finish(false);
 },{capture:true,passive:false});
 window.addEventListener('wheel',e => { if (canvas) { e.preventDefault(); e.stopImmediatePropagation(); } else if (gesture) reset(); },{capture:true,passive:false});
 window.addEventListener('click',e => { if (performance.now()<suppressClickUntil && e.detail!==0) { e.preventDefault(); e.stopImmediatePropagation(); } },true);
@@ -182,7 +211,18 @@ window.addEventListener('keydown',e => {
  if (e.key==='Escape' && (gesture || canvas)) { e.preventDefault(); if (closing) reset(); else cancel(); }
  else if (canvas && ['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(e.key)) e.preventDefault();
 },true);
-window.addEventListener('pointercancel',cancel,true);
+window.addEventListener('pointercancel',e => { touches.delete(e.pointerId); cancel(); },true);
+// Capture alone cannot override native panning chosen at touch start.
+window.addEventListener('touchmove',e => {
+ if (touchState === 'deck-active' && e.cancelable) e.preventDefault();
+},{capture:true,passive:false});
+window.addEventListener('contextmenu',e => {
+ if (touchState === 'deck-active') e.preventDefault();
+},true);
+window.addEventListener('touchend',e => { if (!e.touches.length) touches.clear(); },{passive:true});
+window.addEventListener('touchcancel',() => { touches.clear(); if (touchDeck || gesture?.type === 'touch') cancel(); },{passive:true});
+window.addEventListener('scroll',() => { if (touchState === 'holding') reset(); },{capture:true,passive:true});
+window.addEventListener('orientationchange',() => { if (touchDeck || gesture?.type === 'touch') reset(); });
 document.documentElement.addEventListener('lostpointercapture',e => { if (deckActive && gesture && e.target===document.documentElement) cancel(); });
 window.addEventListener('resize',reset); window.addEventListener('blur',() => { if (!navigating) cancel(); });
 document.addEventListener('visibilitychange',() => { if (document.hidden && !navigating) reset(); });

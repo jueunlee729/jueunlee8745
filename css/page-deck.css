@@ -7,3 +7,5 @@
 .is-deck-preview { pointer-events:none; }
 .is-deck-preview *, .is-deck-preview *::before, .is-deck-preview *::after { animation-play-state:paused !important; }
 .is-deck-preview.loading::after { animation-play-state:running !important; }
+@media (pointer: coarse) { main { touch-action: pan-y; } }
+.is-page-deck { -webkit-touch-callout:none; }
