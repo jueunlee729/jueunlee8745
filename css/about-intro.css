@@ -77,6 +77,11 @@
 .about-intro.is-open .about-intro__card--certification { transition-delay: 210ms; }
 .fancybox__slide.has-inline:has(> .about-intro) { padding: 0; }
 .about-intro > .carousel__button.is-close { position: fixed; top: 12px; right: 12px; z-index: 3; }
+@media (min-width: 1200px) {
+    .about-intro__card {
+        width: min(29.5%, 401.2px, calc((100dvh - 180px) * .5192), calc((100dvh - 174px) * 454 / 890));
+    }
+}
 @media (max-width: 700px) {
     .about-intro__background { position: fixed; }
     .about-intro__stage { display: flex; flex-direction: column; justify-content: flex-start; padding: 100px 24px 40px; }
