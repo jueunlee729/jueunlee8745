@@ -61,16 +61,20 @@
 }
 
 /* HIBANEA uses the existing inline scroll/gesture/video lifecycle. */
+.hibanea-content {
+    width: min(100%, 1200px);
+    margin: 0 auto;
+}
+
 .hibanea-project > .content__title,
 .hibanea-project > .content__author,
 .hibanea-project > .content__desc {
     pointer-events: none;
 }
 
-.hibanea-scroll > .hibanea-media {
+.hibanea-content > .hibanea-media {
     display: block;
     width: 100%;
-    max-width: none;
     height: auto;
     margin: 0;
     padding: 0;
